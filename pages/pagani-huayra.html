@@ -1,0 +1,683 @@
+<!--
+  Pagani Huayra R — Car Detail Page
+  Sections: Nav → Hero (3D/video) → In Motion → Exhaust
+            → Interior → Showcase → REVV Footer
+  Scripts: Three.js, GSAP + ScrollTrigger
+  Features: 360° model, color change, drive mode, draggable text
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pagani Huayra - Art Meets Science</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/images/favicon.svg">
+    <meta name="description" content="The Pagani Huayra presented as a focused 3D hero experience.">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Rajdhani:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/pagani-huayra.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+</head>
+<body class="pagani-page">
+    <nav id="floating-nav" class="floating-nav" aria-label="Section navigation">
+        <a href="#section-pagani"     class="floating-link active">HUAYRA</a>
+        <a href="#section-perf"      class="floating-link">PERFORMANCE</a>
+        <a href="#section-exhaust"    class="floating-link">EXHAUST</a>
+        <a href="#section-details"    class="floating-link">INTERIOR</a>
+        <a href="#section-showcase"   class="floating-link">SHOWCASE</a>
+        <button id="back-to-top" class="back-top-btn" type="button" aria-label="Back to top">↑</button>
+    </nav>
+
+    <main class="hero-shell">
+
+        <!-- ===== HERO ===== -->
+        <section id="section-pagani" class="hero-stage">
+            <video id="hero-intro-video" class="hero-intro-video" src="../assets/videos/pagani-intro.mp4" autoplay muted loop playsinline preload="auto"></video>
+            <div class="hero-text-vertical">
+                <span class="hero-title-small">PAGANI HUAYRA</span>
+                <span class="hero-subtitle-vertical">ART MEETS SCIENCE</span>
+            </div>
+            <canvas id="hero-model-canvas" class="hero-model hero-model-hidden"></canvas>
+            <div class="hero-top-left-controls">
+                <a href="../home.html" class="hero-toggle-btn hero-toggle-btn-top hero-home-btn"><span>HOME</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg></a>
+            </div>
+            <div class="hero-top-right-controls">
+                <button id="show-360" class="hero-toggle-btn hero-toggle-btn-top hero-360-btn" type="button">360°</button>
+                <button id="show-video" class="hero-toggle-btn hero-toggle-btn-secondary hero-toggle-hidden" type="button"><span>VIDEO</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+            </div>
+            <div id="color-controls" class="color-controls color-controls-hidden">
+                <button id="drive-mode" class="hero-toggle-btn hero-drive-btn">DRIVE</button>
+                <button class="color-btn" data-color="#4169E1" style="background:#4169E1;" title="Blue Tricolore"></button>
+                <button class="color-btn" data-color="#1a1a1a" style="background:#1a1a1a;" title="Carbon Black"></button>
+                <button class="color-btn" data-color="#8B0000" style="background:#8B0000;" title="Rosso"></button>
+                <button id="reset-color" class="color-btn reset-btn" title="Reset Color">⟲</button>
+            </div>
+            <div class="hero-bottom-controls">
+                <a href="#section-moving" class="hero-explore-btn">
+                    <span>EXPLORE</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12l7 7 7-7"/>
+                    </svg>
+                </a>
+            </div>
+        </section>
+
+        <!-- ===== IN MOTION — pagani rim video ===== -->
+        <section id="section-moving" class="moving-section">
+            <video class="moving-video" src="../assets/videos/pagani-rim.mp4" autoplay muted loop playsinline preload="auto"></video>
+            <div class="hotspot-container">
+                <div class="hotspot" style="top:45%;left:30%;">
+                    <div class="hotspot-pulse"></div><div class="hotspot-dot"></div>
+                    <div class="hotspot-info"><h4>Top Speed</h4><span class="hotspot-value">238</span><span class="hotspot-unit">mph</span></div>
+                </div>
+                <div class="hotspot" style="top:55%;left:55%;">
+                    <div class="hotspot-pulse"></div><div class="hotspot-dot"></div>
+                    <div class="hotspot-info"><h4>Power Output</h4><span class="hotspot-value">764</span><span class="hotspot-unit">horsepower</span></div>
+                </div>
+                <div class="hotspot" style="top:50%;left:70%;">
+                    <div class="hotspot-pulse"></div><div class="hotspot-dot"></div>
+                    <div class="hotspot-info"><h4>0-60 mph</h4><span class="hotspot-value">2.8</span><span class="hotspot-unit">seconds</span></div>
+                </div>
+                <div class="hotspot" style="top:40%;left:45%;">
+                    <div class="hotspot-pulse"></div><div class="hotspot-dot"></div>
+                    <div class="hotspot-info"><h4>Engine</h4><span class="hotspot-value">V12</span><span class="hotspot-unit">6.0L AMG Twin-Turbo</span></div>
+                </div>
+            </div>
+            <div class="moving-text-left" data-scroll>
+                <h2>FORGED PERFECTION</h2>
+                <p>APP Tech forged aluminium wheels — each one a masterpiece of precision engineering, spinning at the edge of physics.</p>
+            </div>
+        </section>
+
+        <!-- ===== PERFORMANCE SPECS ===== -->
+        <section id="section-perf" class="perf-specs">
+            <h2 class="perf-specs-title">Performance</h2>
+            <div class="perf-specs-grid">
+                <div class="perf-spec-row">
+                    <span class="perf-spec-label">Engine type</span>
+                    <span class="perf-spec-value">V12 NA</span>
+                </div>
+                <div class="perf-spec-row">
+                    <span class="perf-spec-label">Power output</span>
+                    <span class="perf-spec-value">634 kW</span>
+                </div>
+                <div class="perf-spec-row">
+                    <span class="perf-spec-label">Maximum torque</span>
+                    <span class="perf-spec-value">750 Nm</span>
+                </div>
+                <div class="perf-spec-row">
+                    <span class="perf-spec-label">0 – 100 km/h</span>
+                    <span class="perf-spec-value">2.7 s</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== EXHAUST — video ===== -->
+        <section id="section-exhaust" class="aero-fullwidth-section">
+            <video class="aero-fullwidth-video" src="../assets/videos/pagani-exhaust.mp4" autoplay muted loop playsinline preload="auto"></video>
+            <div class="aero-floating-copy" data-draggable>
+                <p class="aero-kicker">EXHAUST SYMPHONY</p>
+                <h2>TITANIUM VOICE</h2>
+                <p>The quad titanium exhaust system produces a sound that is pure mechanical poetry — each note tuned by Horacio Pagani himself.</p>
+            </div>
+        </section>
+
+        <!-- ===== INTERIOR — dashboard + interior images ===== -->
+        <section id="section-details" class="details-scroll">
+
+            <!-- Dashboard -->
+            <div class="detail-fullwidth-block">
+                <figure class="detail-fullwidth-media">
+                    <img src="../assets/images/pagani-dashboard.jpg" alt="Pagani Huayra dashboard" loading="lazy">
+                </figure>
+                <div class="floating-text-clean" data-draggable>
+                    <h3>ANALOG SOUL</h3>
+                    <p>Mechanical gauges and exposed linkages celebrate the art of engineering. Every dial is machined from solid aluminium.</p>
+                </div>
+            </div>
+
+            <!-- Interior Main -->
+            <div class="detail-fullwidth-block">
+                <figure class="detail-fullwidth-media">
+                    <img src="../assets/images/pagani-interior-update.jpg" alt="Pagani Huayra interior" loading="lazy">
+                </figure>
+                <div class="floating-text-clean floating-text-left" data-draggable>
+                    <h3>ARTISAN COCKPIT</h3>
+                    <p>Every switch, every dial is machined from solid aluminum with obsessive attention to detail.</p>
+                </div>
+            </div>
+
+            <!-- Interior Detail -->
+            <div class="detail-fullwidth-block">
+                <figure class="detail-fullwidth-media">
+                    <img src="../assets/images/pagani-huayra-interior-update-01.jpg" alt="Pagani Huayra interior detail" loading="lazy">
+                </figure>
+                <div class="floating-text-clean" data-draggable>
+                    <h3>LEATHER &amp; CARBON</h3>
+                    <p>Hand-stitched leather meets exposed carbon fiber in perfect harmony.</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ===== SHOWCASE — horizontal scrolling transparent images ===== -->
+        <section id="section-showcase" class="showcase-section">
+            <div class="showcase-bg"></div>
+
+            <div class="showcase-content">
+                <p class="showcase-kicker">PAGANI HUAYRA</p>
+                <h2 class="showcase-title">THE WIND<br>GOD</h2>
+                <p class="showcase-sub">Named after the Quechua god of wind — a masterpiece where art and science become one.</p>
+            </div>
+
+            <!-- Horizontal scrolling strip -->
+            <div class="showcase-strip-wrapper">
+                <div class="showcase-strip" id="showcase-strip">
+                    <img class="showcase-strip-img" src="../assets/images/pagani-transparent-01.png" alt="Pagani Huayra">
+                    <img class="showcase-strip-img" src="../assets/images/pagani-transparent-02.png" alt="Pagani Huayra side">
+                    <img class="showcase-strip-img" src="../assets/images/pagani-update.webp" alt="Pagani Huayra rear">
+                    <img class="showcase-strip-img" src="../assets/images/pagani-transparent-01.png" alt="Pagani Huayra">
+                    <img class="showcase-strip-img" src="../assets/images/pagani-transparent-02.png" alt="Pagani Huayra side">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- REVV Logo Footer -->
+    <footer class="car-page-footer">
+        <a href="../home.html" class="car-page-footer-link" title="Back to REVV Collection">
+            <svg width="60" height="30" viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="ft-chrome-wing" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e8e4de"/><stop offset="50%" stop-color="#b8b4ae"/><stop offset="100%" stop-color="#d4d0ca"/></linearGradient></defs>
+                <path d="M10 25C30 15 45 15 50 25C55 15 70 15 90 25L95 35C75 25 60 25 50 35C40 25 25 25 5 35L10 25Z" fill="url(#ft-chrome-wing)"/>
+                <path d="M30 25L50 15L70 25L50 35L30 25Z" fill="#e8e4de"/>
+            </svg>
+            <span class="car-page-footer-text">REVV</span>
+        </a>
+    </footer>
+    <style>
+        .car-page-footer{background:#000;padding:40px 0 30px;text-align:center;border-top:1px solid rgba(255,255,255,0.06)}
+        .car-page-footer-link{display:inline-flex;flex-direction:column;align-items:center;gap:10px;text-decoration:none;opacity:.5;transition:opacity .4s ease,transform .4s ease}
+        .car-page-footer-link:hover{opacity:1;transform:translateY(-3px)}
+        .car-page-footer-text{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:8px;color:rgba(255,255,255,.5)}
+        .car-page-footer-link:hover .car-page-footer-text{color:rgba(255,255,255,.9)}
+        .home-transition{position:fixed;inset:0;z-index:99999;background:#000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .5s ease}
+        .home-transition.active{opacity:1;pointer-events:auto}
+        .home-transition svg{opacity:0;transform:scale(.85);transition:opacity .4s ease .15s,transform .4s ease .15s}
+        .home-transition.active svg{opacity:1;transform:scale(1)}
+    </style>
+    <div class="home-transition" id="home-transition">
+        <svg width="100" height="50" viewBox="0 0 100 50" fill="none"><defs><linearGradient id="ht-chrome" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e8e4de"/><stop offset="50%" stop-color="#b8b4ae"/><stop offset="100%" stop-color="#d4d0ca"/></linearGradient></defs><path d="M10 25C30 15 45 15 50 25C55 15 70 15 90 25L95 35C75 25 60 25 50 35C40 25 25 25 5 35L10 25Z" fill="url(#ht-chrome)"/><path d="M30 25L50 15L70 25L50 35L30 25Z" fill="#e8e4de"/></svg>
+    </div>
+
+    <script>
+        /* ============================================================
+           Pagani Huayra R — Inline Script
+           Sections: Zoom Lock → Three.js (3D model + drive mode)
+                     → Color Change → Nav → 360/Video Toggle
+                     → Draggable → GSAP Scroll → Showcase Scroll
+                     → Home Transition
+           ============================================================ */
+
+        // ==================== PREVENT PAGE ZOOM — ALLOW ONLY 3D MODEL ZOOM ====================
+        document.addEventListener('wheel', function(e) {
+            if (e.ctrlKey) e.preventDefault();
+        }, { passive: false });
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0'))
+                e.preventDefault();
+        });
+        document.addEventListener('gesturestart',  function(e) { e.preventDefault(); }, { passive: false });
+        document.addEventListener('gesturechange', function(e) { e.preventDefault(); }, { passive: false });
+        document.addEventListener('gestureend',    function(e) { e.preventDefault(); }, { passive: false });
+
+        // ==================== THREE.JS ====================
+        const canvas = document.getElementById('hero-model-canvas');
+        let scene, camera, renderer, controls, carModel;
+        let isAnimating = false;
+
+        function initThreeJS() {
+            renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x0a0c10);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.0;
+
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.set(4, 3, 8);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.enablePan = false;
+            controls.enableZoom = false; // Disable zoom so page stays scrollable
+            controls.minDistance = 3;
+            controls.maxDistance = 18;
+            controls.minPolarAngle = 0.5;
+            controls.maxPolarAngle = 1.5;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 2;
+            controls.target = new THREE.Vector3(0, 0.5, 0);
+            controls.update();
+
+            // ✅ define canvas correctly
+            const heroCanvas = renderer.domElement;
+
+            // Hover → enable model zoom
+            heroCanvas.addEventListener('mouseenter', () => {
+                controls.enableZoom = true;
+            });
+
+            // Leave → back to page scroll
+            heroCanvas.addEventListener('mouseleave', () => {
+                controls.enableZoom = false;
+            });
+
+            // Control scroll behavior
+            heroCanvas.addEventListener('wheel', (e) => {
+                if (controls.enableZoom) {
+                    e.preventDefault(); // zoom model only
+                }
+            }, { passive: false });
+
+            const groundMesh = new THREE.Mesh(
+                new THREE.PlaneGeometry(30, 30, 32, 32),
+                new THREE.MeshStandardMaterial({ color: 0x111115, side: THREE.DoubleSide, roughness: 0.8, metalness: 0.2 })
+            );
+            groundMesh.geometry.rotateX(-Math.PI / 2);
+            groundMesh.receiveShadow = true;
+            scene.add(groundMesh);
+
+            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+            const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            mainLight.position.set(5, 10, 5);
+            mainLight.castShadow = true;
+            mainLight.shadow.bias = -0.0001;
+            mainLight.shadow.mapSize.width = mainLight.shadow.mapSize.height = 2048;
+            scene.add(mainLight);
+            const fillLight = new THREE.DirectionalLight(0xffffff, 0.4);
+            fillLight.position.set(-5, 5, -5);
+            scene.add(fillLight);
+            const rimLight = new THREE.DirectionalLight(0xffffff, 0.3);
+            rimLight.position.set(0, 3, -8);
+            scene.add(rimLight);
+
+            const loader = new THREE.GLTFLoader();
+            loader.load('../assets/models/pagani.glb', (gltf) => {
+                carModel = gltf.scene;
+                const box    = new THREE.Box3().setFromObject(carModel);
+                const size   = box.getSize(new THREE.Vector3());
+                const center = box.getCenter(new THREE.Vector3());
+                const scale  = 5 / Math.max(size.x, size.y, size.z);
+                carModel.scale.setScalar(scale);
+                carModel.position.set(-center.x * scale, (-box.min.y * scale) + 0.01, -center.z * scale);
+                carModel.traverse(c => { if (c.isMesh) { c.castShadow = true; c.receiveShadow = true; const mats = Array.isArray(c.material) ? c.material : [c.material]; const matName = (mats[0]?.name || '').toLowerCase(); if ((matName.includes('wheel') || matName.includes('tyre') || matName.includes('tire')) && !matName.includes('steering')) { wheelMeshes.push(c); } } });
+                scene.add(carModel);
+            }, undefined, err => console.error(err));
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        let driveMode = false;
+        let wheelMeshes = [];
+
+        function animate() {
+            if (!isAnimating) return;
+            requestAnimationFrame(animate);
+            controls.update();
+            if (driveMode && carModel) {
+                wheelMeshes.forEach(w => { w.rotation.x += 0.3; });
+                carModel.position.y = Math.sin(Date.now() * 0.01) * 0.005;
+            }
+            renderer.render(scene, camera);
+        }
+        function startAnimation() { if (!isAnimating) { isAnimating = true; animate(); } }
+        function stopAnimation()  { isAnimating = false; }
+
+        function enableDriveMode() {
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 6;
+            document.getElementById('drive-mode').classList.add('drive-active');
+
+            // Turn on model lights via emissive
+            if (carModel) {
+                carModel.traverse(c => {
+                    if (!c.isMesh || !c.material) return;
+                    const mats = Array.isArray(c.material) ? c.material : [c.material];
+                    mats.forEach(mat => {
+                        const mName = (mat.name || '').toLowerCase();
+                        if (!mat.emissive) return;
+                        if (!mat.userData._driveOrig) {
+                            mat.userData._driveOrig = {
+                                emissive: mat.emissive.clone(),
+                                emissiveIntensity: mat.emissiveIntensity
+                            };
+                        }
+                        // Front bumper lights + chassis lights + hood lights
+                        if (mName.includes('mm_lights_mat') && (mName.includes('frontbumper') || mName.includes('hood') || mName.includes('chassis'))) {
+                            mat.emissive.set(0xffffff);
+                            mat.emissiveIntensity = 3;
+                            mat.needsUpdate = true;
+                        }
+                        // Rear bumper lights + boot lights + brake lights
+                        if (mName.includes('mm_lights_mat') && (mName.includes('rearbumper') || mName.includes('boot') || mName.includes('brakes'))) {
+                            mat.emissive.set(0xff2200);
+                            mat.emissiveIntensity = 4;
+                            mat.needsUpdate = true;
+                        }
+                        // Door lights
+                        if (mName.includes('door') && mName.includes('mm_lights_mat')) {
+                            mat.emissive.set(0xff4400);
+                            mat.emissiveIntensity = 3;
+                            mat.needsUpdate = true;
+                        }
+                        // Headlight lenses
+                        if (mName.includes('headlight_lens')) {
+                            mat.emissive.set(0xccddff);
+                            mat.emissiveIntensity = 2;
+                            mat.needsUpdate = true;
+                        }
+                        // Taillight lenses
+                        if (mName.includes('taillight_lens')) {
+                            mat.emissive.set(0xff0000);
+                            mat.emissiveIntensity = 4;
+                            mat.needsUpdate = true;
+                        }
+                    });
+                });
+            }
+
+            // Scene lights
+            if (!scene.userData._driveLights) {
+                const hL = new THREE.SpotLight(0xffffff, 3, 12, Math.PI/6, 0.5);
+                hL.position.set(-0.8, 0.6, 3); hL.target.position.set(-0.8, 0, 8);
+                scene.add(hL); scene.add(hL.target);
+                const hR = new THREE.SpotLight(0xffffff, 3, 12, Math.PI/6, 0.5);
+                hR.position.set(0.8, 0.6, 3); hR.target.position.set(0.8, 0, 8);
+                scene.add(hR); scene.add(hR.target);
+                const tL = new THREE.PointLight(0xff0000, 5, 6);
+                tL.position.set(-0.7, 0.6, -2.5); scene.add(tL);
+                const tR = new THREE.PointLight(0xff0000, 5, 6);
+                tR.position.set(0.7, 0.6, -2.5); scene.add(tR);
+                const iL = new THREE.PointLight(0xff6633, 1.5, 4);
+                iL.position.set(0, 1, 0.3); scene.add(iL);
+                scene.userData._driveLights = [hL, hL.target, hR, hR.target, tL, tR, iL];
+            }
+        }
+
+        function disableDriveMode() {
+            controls.autoRotateSpeed = 2;
+            document.getElementById('drive-mode').classList.remove('drive-active');
+
+            if (carModel) {
+                carModel.traverse(c => {
+                    if (!c.isMesh || !c.material) return;
+                    const mats = Array.isArray(c.material) ? c.material : [c.material];
+                    mats.forEach(mat => {
+                        if (mat.userData._driveOrig) {
+                            if (mat.emissive) mat.emissive.copy(mat.userData._driveOrig.emissive);
+                            mat.emissiveIntensity = mat.userData._driveOrig.emissiveIntensity;
+                            mat.needsUpdate = true;
+                        }
+                    });
+                });
+            }
+
+            if (scene.userData._driveLights) {
+                scene.userData._driveLights.forEach(l => scene.remove(l));
+                scene.userData._driveLights = null;
+            }
+        }
+
+function setCarColor(hex) {
+    if (!carModel) return;
+    const color = new THREE.Color(hex);
+    carModel.traverse(c => {
+        if (!c.isMesh || !c.material) return;
+        const mats = Array.isArray(c.material) ? c.material : [c.material];
+        mats.forEach(mat => {
+            if (!mat.isMeshStandardMaterial && !mat.isMeshPhysicalMaterial) return;
+            if (mat.transparent && mat.opacity < 0.9) return;
+            if (mat.metalness > 0.95 && mat.roughness < 0.08) return;
+            const b = mat.color.r + mat.color.g + mat.color.b;
+            if (b < 0.08) return;
+            if (!mat.userData._origColor) mat.userData._origColor = mat.color.clone();
+            mat.color.set(color);
+            mat.needsUpdate = true;
+        });
+    });
+}
+
+function resetCarColor() {
+    if (!carModel) return;
+    carModel.traverse(c => {
+        if (!c.isMesh || !c.material) return;
+        const mats = Array.isArray(c.material) ? c.material : [c.material];
+        mats.forEach(mat => {
+            if (mat.userData._origColor) {
+                mat.color.copy(mat.userData._origColor);
+                mat.needsUpdate = true;
+            }
+        });
+    });
+}
+
+        initThreeJS();
+
+        // ==================== NAV ====================
+        const floatingNav    = document.getElementById('floating-nav');
+        const heroIntroVideo = document.getElementById('hero-intro-video');
+        const heroModel      = document.getElementById('hero-model-canvas');
+        const show360Btn     = document.getElementById('show-360');
+        const showVideoBtn   = document.getElementById('show-video');
+        const backToTopBtn   = document.getElementById('back-to-top');
+        const navLinks       = document.querySelectorAll('.floating-link');
+        const colorControls  = document.getElementById('color-controls');
+        const colorBtns      = document.querySelectorAll('.color-btn');
+        const heroText       = document.querySelector('.hero-text-vertical');
+
+        const NAV_SECTIONS = ['section-pagani','section-perf','section-exhaust','section-details','section-showcase'];
+
+        function updateFloatingNav() {
+            const hero = document.querySelector('.hero-stage');
+            if (hero) {
+                const heroBottom = hero.getBoundingClientRect().bottom;
+                floatingNav.classList.toggle('visible', heroBottom < 100);
+            }
+        }
+
+        function updateActiveLink() {
+            const vh = window.innerHeight;
+            let bestId = NAV_SECTIONS[0], bestScore = -Infinity;
+            NAV_SECTIONS.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const rect = el.getBoundingClientRect();
+                const visible = Math.max(0, Math.min(rect.bottom, vh) - Math.max(rect.top, 0));
+                if (visible > bestScore) { bestScore = visible; bestId = id; }
+            });
+            navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + bestId));
+        }
+
+        window.addEventListener('scroll', () => { updateFloatingNav(); updateActiveLink(); }, { passive: true });
+        updateFloatingNav(); updateActiveLink();
+
+        // ==================== 360 / VIDEO TOGGLE ====================
+        function show360View() {
+            heroIntroVideo.pause();
+            heroIntroVideo.classList.add('hero-intro-video-hidden');
+            heroModel.classList.remove('hero-model-hidden');
+            startAnimation();
+            show360Btn.classList.add('hero-toggle-hidden');
+            showVideoBtn.classList.remove('hero-toggle-hidden');
+            colorControls.classList.remove('color-controls-hidden');
+            if (heroText) { heroText.style.opacity = '0'; heroText.style.pointerEvents = 'none'; }
+        }
+        function showVideoView() {
+            heroModel.classList.add('hero-model-hidden');
+            stopAnimation();
+            heroIntroVideo.classList.remove('hero-intro-video-hidden');
+            heroIntroVideo.play().catch(() => {});
+            showVideoBtn.classList.add('hero-toggle-hidden');
+            show360Btn.classList.remove('hero-toggle-hidden');
+            colorControls.classList.add('color-controls-hidden');
+            if (heroText) { heroText.style.opacity = '1'; heroText.style.pointerEvents = 'auto'; }
+        }
+
+        colorBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                setCarColor(btn.getAttribute('data-color'));
+                colorBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+        document.getElementById('reset-color').addEventListener('click', () => {
+            resetCarColor();
+            colorBtns.forEach(b => b.classList.remove('active'));
+        });
+        show360Btn.addEventListener('click', show360View);
+        showVideoBtn.addEventListener('click', showVideoView);
+
+        document.getElementById('drive-mode').addEventListener('click', () => {
+            driveMode = !driveMode;
+            if (driveMode) enableDriveMode(); else disableDriveMode();
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const t = document.querySelector(link.getAttribute('href'));
+                if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+        backToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // ==================== DRAGGABLE ====================
+        function makeDraggable(el) {
+            let dragging = false, sx, sy, ix, iy;
+            el.addEventListener('mousedown', e => {
+                dragging = true; sx = e.clientX; sy = e.clientY;
+                const r = el.getBoundingClientRect(); ix = r.left; iy = r.top;
+                el.style.cssText += ';position:fixed;left:'+ix+'px;top:'+iy+'px;bottom:auto;right:auto;z-index:100';
+            });
+            document.addEventListener('mousemove', e => {
+                if (!dragging) return;
+                el.style.left = (ix + e.clientX - sx) + 'px';
+                el.style.top  = (iy + e.clientY - sy) + 'px';
+            });
+            document.addEventListener('mouseup', () => { if (dragging) { dragging = false; el.style.zIndex = '3'; } });
+        }
+
+        const movingText = document.querySelector('.moving-text-left');
+        if (movingText) makeDraggable(movingText);
+        document.querySelectorAll('[data-draggable]').forEach(el => makeDraggable(el));
+
+        document.querySelectorAll('.detail-fullwidth-media img[loading="lazy"]').forEach(img => {
+            if (img.complete) img.classList.add('loaded');
+            else img.addEventListener('load', () => img.classList.add('loaded'));
+        });
+
+        // ==================== GSAP ====================
+        gsap.registerPlugin(ScrollTrigger);
+
+        gsap.set('.moving-text-left', { opacity: 0, y: 40 });
+        ScrollTrigger.create({
+            trigger: '#section-moving',
+            start: 'top 60%',
+            onEnter: () => gsap.to('.moving-text-left', { opacity: 1, y: 0, duration: 1, ease: 'power3.out' })
+        });
+
+        // Cinematic slide-over: exhaust + all interior blocks
+        const cinematicSections = [
+            document.getElementById('section-exhaust'),
+            ...document.querySelectorAll('#section-details .detail-fullwidth-block')
+        ];
+
+        cinematicSections.forEach((section, index) => {
+            if (!section) return;
+            const text = section.querySelector('.aero-floating-copy') || section.querySelector('.floating-text-clean');
+            const isLast = index === cinematicSections.length - 1;
+
+            section.style.zIndex = index + 10;
+            if (text) gsap.set(text, { opacity: 0, y: 40 });
+
+            if (index === 0) {
+                ScrollTrigger.create({
+                    trigger: section, start: 'top top', end: '+=100%',
+                    pin: true, pinSpacing: false,
+                    onEnter: () => { if (text) gsap.to(text, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }); }
+                });
+            } else {
+                const prev = cinematicSections[index - 1];
+                gsap.set(section, { yPercent: 100 });
+                gsap.to(section, {
+                    yPercent: 0, ease: 'none',
+                    scrollTrigger: { trigger: prev, start: 'top top', end: '+=100%', scrub: true }
+                });
+                ScrollTrigger.create({
+                    trigger: section, start: 'top 70%',
+                    onEnter: () => { if (text) gsap.to(text, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }); }
+                });
+                if (!isLast) {
+                    ScrollTrigger.create({
+                        trigger: section, start: 'top top', end: '+=100%',
+                        pin: true, pinSpacing: false
+                    });
+                }
+            }
+        });
+
+        // ==================== HORIZONTAL SCROLLING SHOWCASE ====================
+        const showcaseStrip = document.getElementById('showcase-strip');
+        if (showcaseStrip) {
+            let scrollPos = 0;
+            const scrollSpeed = 0.5;
+            
+            function autoScroll() {
+                scrollPos -= scrollSpeed;
+                const stripWidth = showcaseStrip.scrollWidth / 2;
+                
+                if (Math.abs(scrollPos) >= stripWidth) {
+                    scrollPos = 0;
+                }
+                
+                showcaseStrip.style.transform = `translateX(${scrollPos}px)`;
+                requestAnimationFrame(autoScroll);
+            }
+            
+            autoScroll();
+        }
+
+        // Showcase section entrance animation
+        gsap.set('.showcase-content', { opacity: 0, y: 60 });
+
+        ScrollTrigger.create({
+            trigger: '#section-showcase',
+            start: 'top 70%',
+            onEnter: () => {
+                gsap.to('.showcase-content', { opacity: 1, y: 0, duration: 1, ease: 'power3.out' });
+            }
+        });
+
+// ==================== HOME TRANSITION ====================
+document.querySelectorAll('.hero-home-btn, .car-page-footer-link').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const overlay = document.getElementById('home-transition');
+        overlay.classList.add('active');
+        setTimeout(() => { window.location.href = '../home.html'; }, 600);
+    });
+});
+    </script>
+</body>
+</html>

@@ -1,0 +1,686 @@
+<!--
+  Lamborghini Revuelto — Car Detail Page
+  Sections: Nav → Hero (3D/video) → In Motion → Aerodynamics
+            → Interior → Engine → Gearbox → REVV Footer
+  Scripts: Three.js, GSAP + ScrollTrigger
+  Features: 360° model, color change, drive mode, draggable text
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lamborghini Revuelto - Born From Fire</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/images/favicon.svg">
+    <meta name="description" content="The Lamborghini Revuelto presented as a focused 3D hero experience.">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Rajdhani:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/lamborghini-revuelto.css">
+    <!-- Three.js for 3D model -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- GSAP for scroll animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+</head>
+<body class="lamborghini-page">
+    <nav id="floating-nav" class="floating-nav" aria-label="Section navigation">
+        <a href="#section-revuelto" class="floating-link active">REVUELTO</a>
+        <a href="#section-perf" class="floating-link">PERFORMANCE</a>
+        <a href="#section-aero" class="floating-link">AERODYNAMICS</a>
+        <a href="#section-details" class="floating-link">INTERIOR</a>
+        <a href="#section-engine" class="floating-link">ENGINE</a>
+        <a href="#section-gearbox" class="floating-link">GEARBOX</a>
+        <button id="back-to-top" class="back-top-btn" type="button" aria-label="Back to top">↑</button>
+    </nav>
+
+    <main class="hero-shell">
+
+        <!-- ===== HERO ===== -->
+        <section id="section-revuelto" class="hero-stage">
+            <video id="hero-intro-video" class="hero-intro-video" src="../assets/videos/lambo-intro.mp4" autoplay muted loop playsinline preload="auto"></video>
+            <div class="hero-text-vertical">
+                <span class="hero-title-small">REVUELTO</span>
+                <span class="hero-subtitle-vertical">BORN FROM FIRE</span>
+            </div>
+            <canvas id="hero-model-canvas" class="hero-model hero-model-hidden"></canvas>
+            <div class="hero-top-left-controls">
+                <a href="../home.html" class="hero-toggle-btn hero-toggle-btn-top hero-home-btn"><span>HOME</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg></a>
+            </div>
+            <div class="hero-top-right-controls">
+                <button id="show-360" class="hero-toggle-btn hero-toggle-btn-top hero-360-btn" type="button">360°</button>
+                <button id="show-video" class="hero-toggle-btn hero-toggle-btn-secondary hero-toggle-hidden" type="button"><span>VIDEO</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+            </div>
+            <div id="color-controls" class="color-controls color-controls-hidden">
+                <button id="drive-mode" class="hero-toggle-btn hero-drive-btn">DRIVE</button>
+                <button class="color-btn" data-color="#1c3f73" style="background:#1c3f73;" title="Blue"></button>
+                <button class="color-btn" data-color="#D4A017" style="background:#D4A017;" title="Giallo Orion"></button>
+                <button class="color-btn" data-color="#e8a020" style="background:#e8a020;" title="Orange"></button>
+                <button class="color-btn" data-color="#C0C0C0" style="background:#C0C0C0;" title="Silver"></button>
+                <button id="reset-color" class="color-btn" style="background:#444;" title="Reset">⟲</button>
+            </div>
+            <div class="hero-bottom-controls">
+                <a href="#section-moving" class="hero-explore-btn">
+                    <span>EXPLORE</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12l7 7 7-7"/>
+                    </svg>
+                </a>
+            </div>
+        </section>
+
+        <!-- ===== IN MOTION ===== -->
+        <section id="section-moving" class="moving-section">
+            <video class="moving-video" src="../assets/videos/lambo-entry.mp4" autoplay muted loop playsinline preload="auto"></video>
+            <div class="moving-text-left" data-scroll>
+                <h2>FEROCIOUS</h2>
+                <p>Unleashing a new era of hybrid hypercar performance, the REVUELTO fuses a naturally aspirated V12 with three electric motors to redefine what Lamborghini means.</p>
+            </div>
+        </section>
+
+        <!-- ===== PERFORMANCE SPECS ===== -->
+        <section id="section-perf" class="perf-specs">
+            <h2 class="perf-specs-title">Performance</h2>
+            <div class="perf-specs-grid">
+                <div class="perf-spec-row">
+                    <span class="perf-spec-label">Engine type</span>
+                    <span class="perf-spec-value">V12 Hybrid</span>
+                </div>
+                <div class="perf-spec-row">
+                    <span class="perf-spec-label">Power output</span>
+                    <span class="perf-spec-value">757 kW</span>
+                </div>
+                <div class="perf-spec-row">
+                    <span class="perf-spec-label">Maximum torque</span>
+                    <span class="perf-spec-value">725 Nm</span>
+                </div>
+                <div class="perf-spec-row">
+                    <span class="perf-spec-label">0 – 100 km/h</span>
+                    <span class="perf-spec-value">2.5 s</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== AERODYNAMICS ===== -->
+        <section id="section-aero" class="aero-fullwidth-section">
+            <video class="aero-fullwidth-video" src="../assets/videos/lambo-aerodynamics.mp4" autoplay muted loop playsinline preload="auto"></video>
+            <div class="aero-floating-copy" data-draggable>
+                <p class="aero-kicker">AERODYNAMICS</p>
+                <h2>SCULPTED BY WIND</h2>
+                <p>Active aerodynamics and a carbon-fiber body sculpted by the wind deliver downforce and agility that push the boundaries of physics.</p>
+            </div>
+        </section>
+
+        <!-- ===== INTERIOR ===== -->
+        <section id="section-details" class="details-scroll">
+
+            <div class="detail-fullwidth-block">
+                <figure class="detail-fullwidth-media">
+                    <img src="../assets/images/lambo-drivr-side.jpg" alt="Lamborghini interior driver side" loading="lazy">
+                </figure>
+                <div class="floating-text-clean" data-draggable>
+                    <h3>INTERIOR PRECISION</h3>
+                    <p>The driver-focused cabin combines luxury craftsmanship with performance ergonomics.</p>
+                </div>
+            </div>
+
+            <div class="detail-fullwidth-block">
+                <figure class="detail-fullwidth-media">
+                    <img src="../assets/images/lambo-passenger-side.jpg" alt="Lamborghini Revuelto passenger side" loading="lazy">
+                </figure>
+                <div class="floating-text-clean floating-text-left" data-draggable>
+                    <h3>PASSENGER LUXURY</h3>
+                    <p>Every seat offers an immersive experience of refined comfort and premium materials.</p>
+                </div>
+            </div>
+
+            <div class="detail-fullwidth-block">
+                <figure class="detail-fullwidth-media">
+                    <img src="../assets/images/lambi-steering.jpg" alt="Lamborghini Revuelto steering wheel" loading="lazy">
+                </figure>
+                <div class="floating-text-clean" data-draggable>
+                    <h3>COMMAND CENTER</h3>
+                    <p>The steering wheel puts total control at your fingertips with intuitive precision.</p>
+                </div>
+            </div>
+
+            <div class="detail-fullwidth-block">
+                <figure class="detail-fullwidth-media">
+                    <img src="../assets/images/lambo-interior-orange.webp" alt="Lamborghini Revuelto orange interior" loading="lazy">
+                </figure>
+                <div class="floating-text-clean floating-text-left" data-draggable>
+                    <h3>SIGNATURE ORANGE</h3>
+                    <p>Lamborghini's iconic orange interior — a statement of passion and individuality.</p>
+                </div>
+            </div>
+
+            <div class="detail-fullwidth-block">
+                <figure class="detail-fullwidth-media">
+                    <img src="../assets/images/lambo-steering-orange.webp" alt="Lamborghini Revuelto orange steering" loading="lazy">
+                </figure>
+                <div class="floating-text-clean" data-draggable>
+                    <h3>SCULPTURAL DETAIL</h3>
+                    <p>Every surface is crafted with obsessive attention to form and function.</p>
+                </div>
+            </div>
+
+            <div class="detail-fullwidth-block">
+                <figure class="detail-fullwidth-media">
+                    <img src="../assets/images/lambo-wheel-or-rim.jpg" alt="Lamborghini Revuelto wheel" loading="lazy">
+                </figure>
+                <div class="floating-text-clean floating-text-left" data-draggable>
+                    <h3>FORGED WHEELS</h3>
+                    <p>Lightweight forged alloys engineered for maximum performance and visual drama.</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ===== ENGINE VIDEO ===== -->
+        <section id="section-engine" class="detail-fullwidth-block detail-video-block">
+            <video class="detail-fullwidth-video" src="../assets/videos/lambo-engine.mp4" autoplay muted loop playsinline preload="auto"></video>
+            <div class="floating-text-clean" data-draggable>
+                <h3>V12 HYBRID POWERHOUSE</h3>
+                <p>6.5 liters, naturally aspirated, 1,001 horsepower — the most powerful Lamborghini ever built.</p>
+            </div>
+        </section>
+
+        <!-- ===== GEARBOX VIDEO ===== -->
+        <section id="section-gearbox" class="detail-fullwidth-block detail-video-block">
+            <video class="detail-fullwidth-video" src="../assets/videos/lambo-gearbox.mp4" autoplay muted loop playsinline preload="auto"></video>
+            <div class="floating-text-clean floating-text-left" data-draggable>
+                <h3>GEARBOX SYMPHONY</h3>
+                <p>The unmistakable sound signature of Lamborghini performance.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- REVV Logo Footer -->
+    <footer class="car-page-footer">
+        <a href="../home.html" class="car-page-footer-link" title="Back to REVV Collection">
+            <svg width="60" height="30" viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="ft-chrome-wing" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e8e4de"/><stop offset="50%" stop-color="#b8b4ae"/><stop offset="100%" stop-color="#d4d0ca"/></linearGradient></defs>
+                <path d="M10 25C30 15 45 15 50 25C55 15 70 15 90 25L95 35C75 25 60 25 50 35C40 25 25 25 5 35L10 25Z" fill="url(#ft-chrome-wing)"/>
+                <path d="M30 25L50 15L70 25L50 35L30 25Z" fill="#e8e4de"/>
+            </svg>
+            <span class="car-page-footer-text">REVV</span>
+        </a>
+    </footer>
+    <style>
+        .car-page-footer{background:#000;padding:40px 0 30px;text-align:center;border-top:1px solid rgba(255,255,255,0.06)}
+        .car-page-footer-link{display:inline-flex;flex-direction:column;align-items:center;gap:10px;text-decoration:none;opacity:.5;transition:opacity .4s ease,transform .4s ease}
+        .car-page-footer-link:hover{opacity:1;transform:translateY(-3px)}
+        .car-page-footer-text{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:8px;color:rgba(255,255,255,.5)}
+        .car-page-footer-link:hover .car-page-footer-text{color:rgba(255,255,255,.9)}
+        .home-transition{position:fixed;inset:0;z-index:99999;background:#000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .5s ease}
+        .home-transition.active{opacity:1;pointer-events:auto}
+        .home-transition svg{opacity:0;transform:scale(.85);transition:opacity .4s ease .15s,transform .4s ease .15s}
+        .home-transition.active svg{opacity:1;transform:scale(1)}
+    </style>
+    <div class="home-transition" id="home-transition">
+        <svg width="100" height="50" viewBox="0 0 100 50" fill="none"><defs><linearGradient id="ht-chrome" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e8e4de"/><stop offset="50%" stop-color="#b8b4ae"/><stop offset="100%" stop-color="#d4d0ca"/></linearGradient></defs><path d="M10 25C30 15 45 15 50 25C55 15 70 15 90 25L95 35C75 25 60 25 50 35C40 25 25 25 5 35L10 25Z" fill="url(#ht-chrome)"/><path d="M30 25L50 15L70 25L50 35L30 25Z" fill="#e8e4de"/></svg>
+    </div>
+
+    <script>
+        /* ============================================================
+           Lamborghini Revuelto — Inline Script
+           Sections: Zoom Lock → Three.js (3D model + drive mode)
+                     → Color Change → Nav → 360/Video Toggle
+                     → Draggable → Image Load → GSAP Cinematic
+                     → Home Transition
+           ============================================================ */
+
+        // ==================== PREVENT PAGE ZOOM — ALLOW ONLY 3D MODEL ZOOM ====================
+        document.addEventListener('wheel', function(e) {
+            if (e.ctrlKey) e.preventDefault();
+        }, { passive: false });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0'))
+                e.preventDefault();
+        });
+
+        document.addEventListener('gesturestart',  function(e) { e.preventDefault(); }, { passive: false });
+        document.addEventListener('gesturechange', function(e) { e.preventDefault(); }, { passive: false });
+        document.addEventListener('gestureend',    function(e) { e.preventDefault(); }, { passive: false });
+
+        // ==================== THREE.JS 3D MODEL SETUP ====================
+        const canvas = document.getElementById('hero-model-canvas');
+        let scene, camera, renderer, controls, carModel;
+        let isAnimating = false;
+
+        function initThreeJS() {
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x0a0c10);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.0;
+
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.set(4, 3, 8);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.enablePan = false;
+            controls.enableZoom = false; // Disable zoom so page stays scrollable
+            controls.minDistance = 4;
+            controls.maxDistance = 15;
+            controls.minPolarAngle = 0.5;
+            controls.maxPolarAngle = 1.5;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 2;
+            controls.target = new THREE.Vector3(0, 0.5, 0);
+            controls.update();
+
+
+
+            // ✅ define canvas correctly
+            const heroCanvas = renderer.domElement;
+
+            // Hover → enable model zoom
+            heroCanvas.addEventListener('mouseenter', () => {
+                controls.enableZoom = true;
+            });
+
+            // Leave → back to page scroll
+            heroCanvas.addEventListener('mouseleave', () => {
+                controls.enableZoom = false;
+            });
+
+            // Control scroll behavior
+            heroCanvas.addEventListener('wheel', (e) => {
+                if (controls.enableZoom) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            const groundGeometry = new THREE.PlaneGeometry(30, 30, 32, 32);
+            groundGeometry.rotateX(-Math.PI / 2);
+            const groundMesh = new THREE.Mesh(groundGeometry, new THREE.MeshStandardMaterial({ color: 0x111115, side: THREE.DoubleSide, roughness: 0.8, metalness: 0.2 }));
+            groundMesh.receiveShadow = true;
+            scene.add(groundMesh);
+
+            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+            const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            mainLight.position.set(5, 10, 5);
+            mainLight.castShadow = true;
+            mainLight.shadow.bias = -0.0001;
+            mainLight.shadow.mapSize.width = 2048;
+            mainLight.shadow.mapSize.height = 2048;
+            scene.add(mainLight);
+            const fillLight = new THREE.DirectionalLight(0xffffff, 0.4);
+            fillLight.position.set(-5, 5, -5);
+            scene.add(fillLight);
+            const rimLight = new THREE.DirectionalLight(0xffffff, 0.3);
+            rimLight.position.set(0, 3, -8);
+            scene.add(rimLight);
+
+            const loader = new THREE.GLTFLoader();
+            loader.load('../assets/models/lamborghini.glb', (gltf) => {
+                carModel = gltf.scene;
+                const box = new THREE.Box3().setFromObject(carModel);
+                const size = box.getSize(new THREE.Vector3());
+                const center = box.getCenter(new THREE.Vector3());
+                const scale = 5 / Math.max(size.x, size.y, size.z);
+                carModel.scale.setScalar(scale);
+                carModel.position.x = -center.x * scale;
+                carModel.position.y = (-box.min.y * scale) + 0.01;
+                carModel.position.z = -center.z * scale;
+                carModel.traverse((child) => { if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; const mats = Array.isArray(child.material) ? child.material : [child.material]; const matName = (mats[0]?.name || '').toLowerCase(); if (matName.includes('wheel') || matName.includes('tyre') || matName.includes('tire') || matName.includes('rim')) { wheelMeshes.push(child); } } });
+                scene.add(carModel);
+            }, undefined, (error) => { console.error('Error loading model:', error); });
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        let driveMode = false;
+        let wheelMeshes = [];
+
+        function animate() {
+            if (!isAnimating) return;
+            requestAnimationFrame(animate);
+            if (controls) controls.update();
+            if (driveMode && carModel) {
+                wheelMeshes.forEach(w => { w.rotation.x += 0.3; });
+                carModel.position.y = Math.sin(Date.now() * 0.01) * 0.005;
+            }
+            if (renderer && scene && camera) {
+                renderer.render(scene, camera);
+            }
+        }
+
+        function startAnimation() {
+            if (isAnimating) return;
+            isAnimating = true;
+            if (!renderer || !scene || !camera) return;
+            animate();
+        }
+        
+        function stopAnimation() { isAnimating = false; }
+
+        function enableDriveMode() {
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 6;
+            document.getElementById('drive-mode').classList.add('drive-active');
+
+            // Turn on model lights via emissive
+            if (carModel) {
+                carModel.traverse(c => {
+                    if (!c.isMesh || !c.material) return;
+                    const mats = Array.isArray(c.material) ? c.material : [c.material];
+                    mats.forEach(mat => {
+                        const mName = (mat.name || '').toLowerCase();
+                        if (!mat.emissive) return;
+                        if (!mat.userData._driveOrig) {
+                            mat.userData._driveOrig = {
+                                emissive: mat.emissive.clone(),
+                                emissiveIntensity: mat.emissiveIntensity,
+                                opacity: mat.opacity
+                            };
+                        }
+                        // LightA — headlight/taillight housing with arrow DRL pattern
+                        if (mName.includes('lighta_material')) {
+                            mat.emissive.set(0xffffff);
+                            mat.emissiveIntensity = 4;
+                            mat.needsUpdate = true;
+                        }
+                        // RED_GLASS — red taillight glass
+                        if (mName === 'red_glass') {
+                            mat.emissive.set(0xff0000);
+                            mat.emissiveIntensity = 8;
+                            mat.opacity = 0.5;
+                            mat.needsUpdate = true;
+                        }
+                    });
+                });
+            }
+
+            // Scene lights
+            if (!scene.userData._driveLights) {
+                const hL = new THREE.SpotLight(0xffffff, 3, 12, Math.PI/6, 0.5);
+                hL.position.set(-0.8, 0.6, -3); hL.target.position.set(-0.8, 0, -8);
+                scene.add(hL); scene.add(hL.target);
+                const hR = new THREE.SpotLight(0xffffff, 3, 12, Math.PI/6, 0.5);
+                hR.position.set(0.8, 0.6, -3); hR.target.position.set(0.8, 0, -8);
+                scene.add(hR); scene.add(hR.target);
+                const tL = new THREE.PointLight(0xff0000, 5, 6);
+                tL.position.set(-0.7, 0.6, 2.5); scene.add(tL);
+                const tR = new THREE.PointLight(0xff0000, 5, 6);
+                tR.position.set(0.7, 0.6, 2.5); scene.add(tR);
+                const iL = new THREE.PointLight(0xff6633, 0.8, 3);
+                iL.position.set(0, 1, 0.3); scene.add(iL);
+                scene.userData._driveLights = [hL, hL.target, hR, hR.target, tL, tR, iL];
+            }
+        }
+
+        function disableDriveMode() {
+            controls.autoRotateSpeed = 2;
+            document.getElementById('drive-mode').classList.remove('drive-active');
+
+            // Restore original emissive values
+            if (carModel) {
+                carModel.traverse(c => {
+                    if (!c.isMesh || !c.material) return;
+                    const mats = Array.isArray(c.material) ? c.material : [c.material];
+                    mats.forEach(mat => {
+                        if (mat.userData._driveOrig) {
+                            if (mat.emissive) mat.emissive.copy(mat.userData._driveOrig.emissive);
+                            mat.emissiveIntensity = mat.userData._driveOrig.emissiveIntensity;
+                            mat.opacity = mat.userData._driveOrig.opacity;
+                            mat.needsUpdate = true;
+                        }
+                    });
+                });
+            }
+
+            if (scene.userData._driveLights) {
+                scene.userData._driveLights.forEach(l => scene.remove(l));
+                scene.userData._driveLights = null;
+            }
+        }
+
+        // Initialize Three.js scene so the model can load when the page is ready
+        initThreeJS();
+
+        // ==================== CAR COLOR CHANGE ====================
+
+function setCarColor(hex) {
+    if (!carModel) return;
+    const color = new THREE.Color(hex);
+    carModel.traverse(c => {
+        if (!c.isMesh || !c.material) return;
+        const mats = Array.isArray(c.material) ? c.material : [c.material];
+        mats.forEach(mat => {
+            if (!mat.isMeshStandardMaterial && !mat.isMeshPhysicalMaterial) return;
+            if (mat.transparent && mat.opacity < 0.9) return;
+            if (mat.metalness > 0.95 && mat.roughness < 0.08) return;
+            const b = mat.color.r + mat.color.g + mat.color.b;
+            if (b < 0.08) return;
+            // Skip textured materials — only paint solid-color body panels
+            if (mat.map) return;
+            if (!mat.userData._origColor) mat.userData._origColor = mat.color.clone();
+            mat.color.set(color);
+            mat.needsUpdate = true;
+        });
+    });
+}
+
+function resetCarColor() {
+    if (!carModel) return;
+    carModel.traverse(c => {
+        if (!c.isMesh || !c.material) return;
+        const mats = Array.isArray(c.material) ? c.material : [c.material];
+        mats.forEach(mat => {
+            if (mat.userData._origColor) {
+                mat.color.copy(mat.userData._origColor);
+                mat.needsUpdate = true;
+            }
+        });
+    });
+}
+
+document.getElementById("reset-color").addEventListener("click", () => {
+    resetCarColor();
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+});
+
+        // ==================== NAV & SCROLL ====================
+        const floatingNav = document.getElementById('floating-nav');
+        const heroIntroVideo = document.getElementById('hero-intro-video');
+        const heroModel = document.getElementById('hero-model-canvas');
+        const show360Btn = document.getElementById('show-360');
+        const showVideoBtn = document.getElementById('show-video');
+        const backToTopBtn = document.getElementById('back-to-top');
+        const navLinks = document.querySelectorAll('.floating-link');
+        const colorControls = document.getElementById('color-controls');
+        const colorBtns = document.querySelectorAll('.color-btn');
+        const heroText = document.querySelector('.hero-text-vertical');
+
+        const sectionIds = ['section-revuelto', 'section-perf', 'section-aero', 'section-details', 'section-engine', 'section-gearbox'];
+        const observedSections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+
+        function updateFloatingNav() {
+            const hero = document.querySelector('.hero-stage');
+            if (hero) {
+                const heroBottom = hero.getBoundingClientRect().bottom;
+                floatingNav.classList.toggle('visible', heroBottom < 100);
+            }
+        }
+
+        function updateActiveLink() {
+            const vh = window.innerHeight;
+            let bestId = sectionIds[0];
+            let bestScore = -Infinity;
+            observedSections.forEach(section => {
+                if (!section) return;
+                const rect = section.getBoundingClientRect();
+                const visTop    = Math.max(rect.top, 0);
+                const visBottom = Math.min(rect.bottom, vh);
+                const visible   = Math.max(0, visBottom - visTop);
+                if (visible > bestScore) { bestScore = visible; bestId = section.id; }
+            });
+            navLinks.forEach(link => {
+                link.classList.toggle('active', link.getAttribute('href') === `#${bestId}`);
+            });
+        }
+
+        function show360View() {
+            heroIntroVideo.pause();
+            heroIntroVideo.classList.add('hero-intro-video-hidden');
+            heroModel.classList.remove('hero-model-hidden');
+            startAnimation();
+            show360Btn.classList.add('hero-toggle-hidden');
+            showVideoBtn.classList.remove('hero-toggle-hidden');
+            colorControls.classList.remove('color-controls-hidden');
+            if (heroText) { heroText.style.opacity = '0'; heroText.style.pointerEvents = 'none'; }
+        }
+
+        function showVideoView() {
+            heroModel.classList.add('hero-model-hidden');
+            stopAnimation();
+            heroIntroVideo.classList.remove('hero-intro-video-hidden');
+            heroIntroVideo.play().catch(() => {});
+            showVideoBtn.classList.add('hero-toggle-hidden');
+            show360Btn.classList.remove('hero-toggle-hidden');
+            colorControls.classList.add('color-controls-hidden');
+            if (heroText) { heroText.style.opacity = '1'; heroText.style.pointerEvents = 'auto'; }
+        }
+
+        colorBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                setCarColor(btn.getAttribute('data-color'));
+                colorBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        show360Btn.addEventListener('click', show360View);
+        showVideoBtn.addEventListener('click', showVideoView);
+
+        document.getElementById('drive-mode').addEventListener('click', () => {
+            driveMode = !driveMode;
+            if (driveMode) enableDriveMode(); else disableDriveMode();
+        });
+
+        navLinks.forEach((link) => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        backToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        window.addEventListener('scroll', () => { updateFloatingNav(); updateActiveLink(); });
+        updateFloatingNav();
+        updateActiveLink();
+
+        // ==================== DRAGGABLE ====================
+        function makeDraggable(element) {
+            let isDragging = false, startX, startY, initialX, initialY;
+            element.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX; startY = e.clientY;
+                const rect = element.getBoundingClientRect();
+                initialX = rect.left; initialY = rect.top;
+                element.style.position = 'fixed';
+                element.style.left = initialX + 'px';
+                element.style.top = initialY + 'px';
+                element.style.bottom = 'auto';
+                element.style.right = 'auto';
+                element.style.zIndex = '100';
+            });
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                element.style.left = (initialX + e.clientX - startX) + 'px';
+                element.style.top = (initialY + e.clientY - startY) + 'px';
+            });
+            document.addEventListener('mouseup', () => { if (isDragging) { isDragging = false; element.style.zIndex = '3'; } });
+        }
+
+        const movingText = document.querySelector('.moving-text-left');
+        if (movingText) makeDraggable(movingText);
+        document.querySelectorAll('[data-draggable]').forEach(el => makeDraggable(el));
+
+        // ==================== IMAGE LOAD ====================
+        document.querySelectorAll('.detail-fullwidth-media img[loading="lazy"]').forEach((img) => {
+            if (img.complete) img.classList.add('loaded');
+            else img.addEventListener('load', () => img.classList.add('loaded'));
+        });
+
+        // ==================== GSAP CINEMATIC SCROLL ====================
+        gsap.registerPlugin(ScrollTrigger);
+
+        gsap.set('.moving-text-left', { opacity: 0, y: 40 });
+        ScrollTrigger.create({
+            trigger: '#section-moving',
+            start: 'top 60%',
+            onEnter: () => gsap.to('.moving-text-left', { opacity: 1, y: 0, duration: 1, ease: 'power3.out' })
+        });
+
+        const cinematicSections = [
+            document.getElementById('section-aero'),
+            ...document.querySelectorAll('#section-details .detail-fullwidth-block'),
+            document.getElementById('section-engine'),
+            document.getElementById('section-gearbox')
+        ].filter(Boolean);
+
+        cinematicSections.forEach((section, index) => {
+            const text = section.querySelector('.aero-floating-copy') || section.querySelector('.floating-text-clean');
+            const isLast = index === cinematicSections.length - 1;
+
+            section.style.zIndex = index + 10;
+            if (text) gsap.set(text, { opacity: 0, y: 40 });
+
+            if (index === 0) {
+                // First cinematic section (aero) — pin WITHOUT extra spacing so no blank gap
+                ScrollTrigger.create({
+                    trigger: section,
+                    start: 'top top',
+                    end: '+=100%',
+                    pin: true,
+                    pinSpacing: false,
+                    onEnter: () => { if (text) gsap.to(text, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }); }
+                });
+            } else {
+                const prevSection = cinematicSections[index - 1];
+                gsap.set(section, { yPercent: 100 });
+                gsap.to(section, {
+                    yPercent: 0, ease: 'none',
+                    scrollTrigger: { trigger: prevSection, start: 'top top', end: '+=100%', scrub: true }
+                });
+                ScrollTrigger.create({
+                    trigger: section, start: 'top 70%',
+                    onEnter: () => { if (text) gsap.to(text, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }); }
+                });
+                if (!isLast) {
+                    // Pin without extra spacing to avoid blank gaps between sections
+                    ScrollTrigger.create({ trigger: section, start: 'top top', end: '+=100%', pin: true, pinSpacing: false });
+                }
+            }
+        });
+
+// ==================== HOME TRANSITION ====================
+document.querySelectorAll('.hero-home-btn, .car-page-footer-link').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const overlay = document.getElementById('home-transition');
+        overlay.classList.add('active');
+        setTimeout(() => { window.location.href = '../home.html'; }, 600);
+    });
+});
+    </script>
+</body>
+</html>
