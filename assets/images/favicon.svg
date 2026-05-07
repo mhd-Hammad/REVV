@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
+  <defs>
+    <linearGradient id="fl" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8e4de"/>
+      <stop offset="30%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#b8b4ae"/>
+      <stop offset="70%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#d4d0ca"/>
+    </linearGradient>
+    <linearGradient id="fr" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#8a8680"/>
+      <stop offset="30%" stop-color="#c4c0ba"/>
+      <stop offset="50%" stop-color="#5a5854"/>
+      <stop offset="70%" stop-color="#a8a49e"/>
+      <stop offset="100%" stop-color="#6e6c68"/>
+    </linearGradient>
+    <linearGradient id="fc" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#d4d0ca"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+  </defs>
+  <rect width="100" height="50" fill="#000000" rx="8"/>
+  <path fill="url(#fl)" d="M10 25C30 15 45 15 50 25C40 25 25 25 5 35L10 25Z"/>
+  <path fill="url(#fr)" d="M50 25C55 15 70 15 90 25L95 35C75 25 60 25 50 35V25Z"/>
+  <path fill="url(#fc)" d="M30 25L50 15L70 25L50 35L30 25Z"/>
+</svg>
