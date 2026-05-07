@@ -436,7 +436,7 @@
 
         const logoHoldTime = new Promise(resolve => setTimeout(resolve, 3800));
 
-        const assetsPreloading = fetch('index.html')
+        const assetsPreloading = fetch('home.html')
             .then(response => response.ok ? Promise.resolve() : Promise.reject())
             .catch(() => Promise.resolve());
 
@@ -445,7 +445,7 @@
             transitionOverlay.classList.add('active');
 
             setTimeout(() => {
-                window.location.replace('index.html');
+                window.location.replace('home.html');
             }, 400);
         });
     </script>
