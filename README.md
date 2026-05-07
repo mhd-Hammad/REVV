@@ -81,27 +81,21 @@ npx serve .
 
 ## 📸 Screenshots
 
-<!-- Add your screenshots here -->
+### Landing Page
+![Landing Page](assets/images/image.png)
 
-| Landing Page 
-|:---:|:---:|:---:|
-| *![landing page](assets/images/image.png)* 
-| Car Detail (360°) Drive Mode |
-![360](assets/images/image-1.png)
+### Car Detail (360°) Drive Mode
+![360 View](assets/images/image-1.png)
 
-| Performance Specs |
-![performance](assets/images/image-2.png)
+### Performance Specs
+![Performance](assets/images/image-2.png)
 
+### Mobile View
+![Mobile Responsiveness](assets/images/image-3.png)
 
- Mobile View |
- ![mobile responsiveness](assets/images/image-3.png)
-
- Page Transition |
-![landing to specific page ](assets/images/image-4.png)
-![specific to landing page](assets/images/image-5.png)
-
----
-
+### Page Transitions
+![Landing to Page](assets/images/image-4.png)
+![Back to Landing](assets/images/image-5.png)
 ## 🌐 Live Demo
 
 <!-- Add your deployment link here -->
