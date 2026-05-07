@@ -94,7 +94,7 @@ npx serve .
 
 
  Mobile View |
- ![mobile responsiveness](image-3.png)
+ ![mobile responsiveness](assets/images/image-3.png)
 
  Page Transition |
 ![landing to specific page ](image-4.png)
