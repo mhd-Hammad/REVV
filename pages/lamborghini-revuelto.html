@@ -45,7 +45,7 @@
             </div>
             <canvas id="hero-model-canvas" class="hero-model hero-model-hidden"></canvas>
             <div class="hero-top-left-controls">
-                <a href="../index.html" class="hero-toggle-btn hero-toggle-btn-top hero-home-btn"><span>HOME</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg></a>
+                <a href="../home.html" class="hero-toggle-btn hero-toggle-btn-top hero-home-btn"><span>HOME</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg></a>
             </div>
             <div class="hero-top-right-controls">
                 <button id="show-360" class="hero-toggle-btn hero-toggle-btn-top hero-360-btn" type="button">360°</button>
@@ -197,7 +197,7 @@
 
     <!-- REVV Logo Footer -->
     <footer class="car-page-footer">
-        <a href="../index.html" class="car-page-footer-link" title="Back to REVV Collection">
+        <a href="../home.html" class="car-page-footer-link" title="Back to REVV Collection">
             <svg width="60" height="30" viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs><linearGradient id="ft-chrome-wing" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e8e4de"/><stop offset="50%" stop-color="#b8b4ae"/><stop offset="100%" stop-color="#d4d0ca"/></linearGradient></defs>
                 <path d="M10 25C30 15 45 15 50 25C55 15 70 15 90 25L95 35C75 25 60 25 50 35C40 25 25 25 5 35L10 25Z" fill="url(#ft-chrome-wing)"/>
@@ -678,7 +678,7 @@ document.querySelectorAll('.hero-home-btn, .car-page-footer-link').forEach(btn =
         e.preventDefault();
         const overlay = document.getElementById('home-transition');
         overlay.classList.add('active');
-        setTimeout(() => { window.location.href = '../index.html'; }, 600);
+        setTimeout(() => { window.location.href = '../home.html'; }, 600);
     });
 });
     </script>
