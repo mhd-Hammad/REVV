@@ -85,20 +85,20 @@ npx serve .
 
 | Landing Page 
 |:---:|:---:|:---:|
-| *![landing page](image.png)* 
+| *![landing page](assets/images/image.png)* 
 | Car Detail (360°) Drive Mode |
-![360](image-1.png)
+![360](assets/images/image-1.png)
 
 | Performance Specs |
-![performance](image-2.png)
+![performance](assets/images/image-2.png)
 
 
  Mobile View |
  ![mobile responsiveness](assets/images/image-3.png)
 
  Page Transition |
-![landing to specific page ](image-4.png)
-![specific to landing page](image-5.png)
+![landing to specific page ](assets/images/image-4.png)
+![specific to landing page](assets/images/image-5.png)
 
 ---
 
