@@ -1,0 +1,874 @@
+<!--
+  Rimac Nevera — Car Detail Page
+  Sections: Nav → Hero (3D/video) → In Motion → Design
+            → Electric → Interior → Showcase → REVV Footer
+  Scripts: Three.js, GSAP + ScrollTrigger
+  Features: 360° model, color change, drive mode, draggable text
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Rimac Nevera - The Electric Hypercar</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <meta name="description" content="The Rimac Nevera presented as a focused 3D hero experience.">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Rajdhani:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/rimac-nevera.css">
+    <!-- Three.js for 3D model -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- GSAP for scroll animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+</head>
+<body class="rimac-page">
+    <nav id="floating-nav" class="floating-nav" aria-label="Section navigation">
+        <a href="#section-nevera" class="floating-link active">NEVERA</a>
+        <a href="#section-perf" class="floating-link">PERFORMANCE</a>
+        <a href="#section-overview" class="floating-link">DESIGN</a>
+        <a href="#section-performance" class="floating-link">ELECTRIC</a>
+        <a href="#section-details" class="floating-link">INTERIOR</a>
+        <a href="#section-showcase" class="floating-link">SHOWCASE</a>
+        <button id="back-to-top" class="back-top-btn" type="button" aria-label="Back to top">↑</button>
+    </nav>
+
+    <main class="hero-shell">
+        <section id="section-nevera" class="hero-stage">
+            <video id="hero-intro-video" class="hero-intro-video" src="../assets/rimac intro video.mp4" autoplay muted loop playsinline preload="auto"></video>
+            <!-- Hero Text Vertical -->
+            <div class="hero-text-vertical">
+                <span class="hero-title-small">NEVERA</span>
+                <span class="hero-subtitle-vertical">THE ELECTRIC HYPERCAR</span>
+            </div>
+            <!-- Three.js Canvas for 3D Model -->
+            <canvas id="hero-model-canvas" class="hero-model hero-model-hidden"></canvas>
+            <div class="hero-top-left-controls">
+                <a href="../index.html" class="hero-toggle-btn hero-toggle-btn-top hero-home-btn"><span>HOME</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg></a>
+            </div>
+            <div class="hero-top-right-controls">
+                <button id="show-360" class="hero-toggle-btn hero-toggle-btn-top hero-360-btn" type="button">360°</button>
+                <button id="show-video" class="hero-toggle-btn hero-toggle-btn-secondary hero-toggle-hidden" type="button"><span>VIDEO</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+            </div>
+            <!-- Color Picker Controls -->
+            <div id="color-controls" class="color-controls color-controls-hidden">
+                <button id="drive-mode" class="hero-toggle-btn hero-drive-btn">DRIVE</button>
+                <button class="color-btn" data-color="#2B2D30" style="background:#2B2D30;" title="Gunpowder Grey"></button>
+                <button class="color-btn" data-color="#0057FF" style="background:#0057FF;" title="E-Racing Blue"></button>
+                <button class="color-btn" data-color="#00B37A" style="background:#00B37A;" title="Nebula Green"></button>
+                <button id="reset-color" class="color-btn reset-btn" title="Reset Color">⟲</button>
+            </div>
+            <div class="hero-bottom-controls">
+                <a href="#section-moving" class="hero-explore-btn">
+                    <span>EXPLORE</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12l7 7 7-7"/>
+                    </svg>
+                </a>
+            </div>
+        </section>
+
+        <!-- Moving Video Section with Left Scrollable Text -->
+        <section id="section-moving" class="moving-section">
+            <video class="moving-video" src="../assets/rimac moving video.mp4" autoplay muted loop playsinline preload="auto"></video>
+
+            <div class="moving-text-left" data-scroll>
+                <h2>ELECTRIC</h2>
+                <p>The Rimac Nevera redefines what an electric hypercar can be — 1,914 horsepower, four electric motors, and a 0-60 time of 1.85 seconds that shatters every record.</p>
+            </div>
+        </section>
+
+        <!-- ===== PERFORMANCE SPECS ===== -->
+        <section id="section-perf" class="perf-specs">
+            <h2 class="perf-specs-title">Performance</h2>
+            <div class="perf-specs-grid">
+                <div class="perf-spec-row">
+                    <span class="perf-spec-label">Engine type</span>
+                    <span class="perf-spec-value">Quad Electric</span>
+                </div>
+                <div class="perf-spec-row">
+                    <span class="perf-spec-label">Power output</span>
+                    <span class="perf-spec-value">1,427 kW</span>
+                </div>
+                <div class="perf-spec-row">
+                    <span class="perf-spec-label">Maximum torque</span>
+                    <span class="perf-spec-value">2,360 Nm</span>
+                </div>
+                <div class="perf-spec-row">
+                    <span class="perf-spec-label">0 – 100 km/h</span>
+                    <span class="perf-spec-value">1.85 s</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-overview" class="aero-fullwidth-section">
+            <video class="aero-fullwidth-video" src="../assets/rimac design.mp4" autoplay muted loop playsinline preload="auto"></video>
+            <div class="aero-floating-copy" data-draggable>
+                <p class="aero-kicker">DESIGN I</p>
+                <h2>ELECTRIC</h2>
+                <p>The Rimac Nevera redefines what an electric hypercar can be — 1,914 horsepower, four electric motors, and a 0-60 time of 1.85 seconds that shatters every record.</p>
+            </div>
+        </section>
+
+        <section id="section-performance" class="aero-fullwidth-section">
+            <video class="aero-fullwidth-video" src="../assets/rimac engine thing.mp4" autoplay muted loop playsinline preload="auto"></video>
+            <div class="aero-floating-copy aero-floating-copy-left" data-draggable>
+                <p class="aero-kicker">ELECTRIC II</p>
+                <h2>PURE ELECTRIC POWER</h2>
+                <p>Four independent electric motors deliver torque vectoring precision and instantaneous response that no combustion engine can match.</p>
+            </div>
+        </section>
+
+        <section id="section-details" class="details-scroll">
+            <!-- Interior Full -->
+            <div class="detail-fullwidth-block">
+                <figure class="detail-fullwidth-media">
+                    <img src="../assets/rimac interior full.jpg" alt="Rimac Nevera interior full" loading="lazy">
+                </figure>
+                <div class="floating-text-clean" data-draggable>
+                    <h3>INTERIOR PRECISION</h3>
+                    <p>The driver-focused cabin combines luxury craftsmanship with performance ergonomics.</p>
+                </div>
+            </div>
+
+            <!-- Interior -->
+            <div class="detail-fullwidth-block">
+                <figure class="detail-fullwidth-media">
+                    <img src="../assets/rimac interior.jpg" alt="Rimac Nevera interior" loading="lazy">
+                </figure>
+                <div class="floating-text-clean floating-text-left" data-draggable>
+                    <h3>PASSENGER LUXURY</h3>
+                    <p>Every seat offers an immersive experience of refined comfort and premium materials.</p>
+                </div>
+            </div>
+
+            <!-- Dashboard -->
+            <div class="detail-fullwidth-block">
+                <figure class="detail-fullwidth-media">
+                    <img src="../assets/rimac dashboard.jpg" alt="Rimac Nevera dashboard" loading="lazy">
+                </figure>
+                <div class="floating-text-clean" data-draggable>
+                    <h3>COMMAND CENTER</h3>
+                    <p>A fully digital cockpit puts every system at your fingertips with intuitive precision.</p>
+                </div>
+            </div>
+
+            <!-- Screen Interior -->
+            <div class="detail-fullwidth-block">
+                <figure class="detail-fullwidth-media">
+                    <img src="../assets/rimac screen interior.jpg" alt="Rimac Nevera screen interior" loading="lazy">
+                </figure>
+                <div class="floating-text-clean floating-text-left" data-draggable>
+                    <h3>DIGITAL UNIVERSE</h3>
+                    <p>Immersive screens deliver real-time performance data and seamless connectivity.</p>
+                </div>
+            </div>
+
+            <!-- Rim -->
+            <div class="detail-fullwidth-block">
+                <figure class="detail-fullwidth-media">
+                    <img src="../assets/rimac rim.jpg" alt="Rimac Nevera rim" loading="lazy">
+                </figure>
+                <div class="floating-text-clean" data-draggable>
+                    <h3>SCULPTURAL DETAIL</h3>
+                    <p>Every surface is crafted with obsessive attention to form and function.</p>
+                </div>
+            </div>
+
+            <!-- Main Image -->
+            <div class="detail-fullwidth-block">
+                <figure class="detail-fullwidth-media">
+                    <img src="../assets/rimac main image.jpg" alt="Rimac Nevera" loading="lazy">
+                </figure>
+                <div class="floating-text-clean floating-text-left" data-draggable>
+                    <h3>NEVERA SIGNATURE</h3>
+                    <p>Named after a sudden and powerful Mediterranean storm — the Nevera is a force of nature.</p>
+                </div>
+            </div>
+
+            <!-- Engine Thing Video -->
+            <div class="detail-fullwidth-block detail-video-block">
+                <video class="detail-fullwidth-video" src="../assets/rimac other video.mp4" autoplay muted loop playsinline preload="auto"></video>
+                <div class="floating-text-clean" data-draggable>
+                    <h3>ELECTRIC POWERHOUSE</h3>
+                    <p>1,914 horsepower from four electric motors — the most powerful production car ever built.</p>
+                </div>
+            </div>
+
+            <!-- Landing Video -->
+            <div class="detail-fullwidth-block detail-video-block">
+                <video class="detail-fullwidth-video" src="../assets/rimac landing.mp4" autoplay muted loop playsinline preload="auto"></video>
+                <div class="floating-text-clean floating-text-left" data-draggable>
+                    <h3>SILENT STORM</h3>
+                    <p>The unmistakable presence of Rimac performance — electric, instant, relentless.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SHOWCASE — transparent images scrolling horizontally ===== -->
+        <section id="section-showcase" class="showcase-section">
+            <div class="showcase-bg"></div>
+            <div class="showcase-content">
+                <p class="showcase-kicker">RIMAC NEVERA</p>
+                <h2 class="showcase-title">SILENT<br>STORM</h2>
+                <p class="showcase-sub">1,914 horsepower. 1.85 seconds. The most powerful production car ever built.</p>
+            </div>
+            <div class="showcase-strip-wrapper">
+                <div class="showcase-strip" id="showcase-strip">
+                    <img class="showcase-strip-img" src="../assets/remac transparent 01.jpg"  alt="Rimac Nevera">
+                    <img class="showcase-strip-img" src="../assets/re]emac nevera transparent 02.jpg" alt="Rimac Nevera side">
+                    <img class="showcase-strip-img" src="../assets/remac transparent 03.jpg"  alt="Rimac Nevera rear">
+                    <img class="showcase-strip-img" src="../assets/remac transparent 01.jpg"  alt="Rimac Nevera">
+                    <img class="showcase-strip-img" src="../assets/re]emac nevera transparent 02.jpg" alt="Rimac Nevera side">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- REVV Logo Footer -->
+    <footer class="car-page-footer">
+        <a href="../index.html" class="car-page-footer-link" title="Back to REVV Collection">
+            <svg width="60" height="30" viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="ft-chrome-wing" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e8e4de"/><stop offset="50%" stop-color="#b8b4ae"/><stop offset="100%" stop-color="#d4d0ca"/></linearGradient></defs>
+                <path d="M10 25C30 15 45 15 50 25C55 15 70 15 90 25L95 35C75 25 60 25 50 35C40 25 25 25 5 35L10 25Z" fill="url(#ft-chrome-wing)"/>
+                <path d="M30 25L50 15L70 25L50 35L30 25Z" fill="#e8e4de"/>
+            </svg>
+            <span class="car-page-footer-text">REVV</span>
+        </a>
+    </footer>
+    <style>
+        .car-page-footer{background:#000;padding:40px 0 30px;text-align:center;border-top:1px solid rgba(255,255,255,0.06)}
+        .car-page-footer-link{display:inline-flex;flex-direction:column;align-items:center;gap:10px;text-decoration:none;opacity:.5;transition:opacity .4s ease,transform .4s ease}
+        .car-page-footer-link:hover{opacity:1;transform:translateY(-3px)}
+        .car-page-footer-text{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:8px;color:rgba(255,255,255,.5)}
+        .car-page-footer-link:hover .car-page-footer-text{color:rgba(255,255,255,.9)}
+        .home-transition{position:fixed;inset:0;z-index:99999;background:#000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .5s ease}
+        .home-transition.active{opacity:1;pointer-events:auto}
+        .home-transition svg{opacity:0;transform:scale(.85);transition:opacity .4s ease .15s,transform .4s ease .15s}
+        .home-transition.active svg{opacity:1;transform:scale(1)}
+    </style>
+    <div class="home-transition" id="home-transition">
+        <svg width="100" height="50" viewBox="0 0 100 50" fill="none"><defs><linearGradient id="ht-chrome" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e8e4de"/><stop offset="50%" stop-color="#b8b4ae"/><stop offset="100%" stop-color="#d4d0ca"/></linearGradient></defs><path d="M10 25C30 15 45 15 50 25C55 15 70 15 90 25L95 35C75 25 60 25 50 35C40 25 25 25 5 35L10 25Z" fill="url(#ht-chrome)"/><path d="M30 25L50 15L70 25L50 35L30 25Z" fill="#e8e4de"/></svg>
+    </div>
+
+    <script>
+        /* ============================================================
+           Rimac Nevera — Inline Script
+           Sections: Zoom Lock → Three.js (3D model + drive mode)
+                     → Color Change → Nav → 360/Video Toggle
+                     → Draggable → GSAP Scroll → Cinematic Slide
+                     → Showcase Scroll → Home Transition
+           ============================================================ */
+
+        // ==================== PREVENT PAGE ZOOM — ALLOW ONLY 3D MODEL ZOOM ====================
+        document.addEventListener('wheel', function(e) {
+            if (e.ctrlKey) e.preventDefault();
+        }, { passive: false });
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0'))
+                e.preventDefault();
+        });
+        document.addEventListener('gesturestart',  function(e) { e.preventDefault(); }, { passive: false });
+        document.addEventListener('gesturechange', function(e) { e.preventDefault(); }, { passive: false });
+        document.addEventListener('gestureend',    function(e) { e.preventDefault(); }, { passive: false });
+
+        // ==================== THREE.JS 3D MODEL SETUP ====================
+        const canvas = document.getElementById('hero-model-canvas');
+        let scene, camera, renderer, controls, carModel;
+        let isAnimating = false;
+
+        function initThreeJS() {
+            // Renderer with improved settings
+            renderer = new THREE.WebGLRenderer({
+                canvas: canvas,
+                antialias: true,
+                alpha: false
+            });
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x0a0c10);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.0;
+
+            // Scene
+            scene = new THREE.Scene();
+
+            // Camera - adjusted for car viewing
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.set(4, 3, 8);
+
+            // Orbit Controls - allow scroll passthrough for page scrolling
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.enablePan = false;
+            controls.enableZoom = false; // Disable zoom so page stays scrollable
+            controls.minDistance = 4;
+            controls.maxDistance = 15;
+            controls.minPolarAngle = 0.5;
+            controls.maxPolarAngle = 1.5;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 2;
+            controls.target = new THREE.Vector3(0, 0.5, 0);
+            controls.update();
+ 
+            // ✅ define canvas correctly
+            const heroCanvas = renderer.domElement;
+
+            // Hover → enable model zoom
+            heroCanvas.addEventListener('mouseenter', () => {
+                controls.enableZoom = true;
+            });
+
+            // Leave → back to page scroll
+            heroCanvas.addEventListener('mouseleave', () => {
+                controls.enableZoom = false;
+            });
+
+            // Control scroll behavior
+            heroCanvas.addEventListener('wheel', (e) => {
+                if (controls.enableZoom) {
+                    e.preventDefault(); // zoom model only
+                }
+            }, { passive: false });
+
+
+            // Ground plane
+            const groundGeometry = new THREE.PlaneGeometry(30, 30, 32, 32);
+            groundGeometry.rotateX(-Math.PI / 2);
+            const groundMaterial = new THREE.MeshStandardMaterial({
+                color: 0x111115,
+                side: THREE.DoubleSide,
+                roughness: 0.8,
+                metalness: 0.2
+            });
+            const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
+            groundMesh.castShadow = false;
+            groundMesh.receiveShadow = true;
+            scene.add(groundMesh);
+
+            // Ambient light
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            // Main directional light
+            const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            mainLight.position.set(5, 10, 5);
+            mainLight.castShadow = true;
+            mainLight.shadow.bias = -0.0001;
+            mainLight.shadow.mapSize.width = 2048;
+            mainLight.shadow.mapSize.height = 2048;
+            scene.add(mainLight);
+
+            // Fill light from opposite side
+            const fillLight = new THREE.DirectionalLight(0xffffff, 0.4);
+            fillLight.position.set(-5, 5, -5);
+            scene.add(fillLight);
+
+            // Soft rim light from behind
+            const rimLight = new THREE.DirectionalLight(0xffffff, 0.3);
+            rimLight.position.set(0, 3, -8);
+            scene.add(rimLight);
+
+            // Load the car model
+            const loader = new THREE.GLTFLoader();
+            loader.load(
+                '../assets/rimac.glb',
+                (gltf) => {
+                    carModel = gltf.scene;
+
+                    const box = new THREE.Box3().setFromObject(carModel);
+                    const size = box.getSize(new THREE.Vector3());
+                    const center = box.getCenter(new THREE.Vector3());
+
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const scale = 5 / maxDim;
+                    carModel.scale.setScalar(scale);
+
+                    carModel.position.x = -center.x * scale;
+                    carModel.position.y = (-box.min.y * scale) + 0.01;
+                    carModel.position.z = -center.z * scale;
+
+                    carModel.traverse((child) => {
+                        if (child.isMesh) {
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                            const n = (child.name || '').toLowerCase();
+                            const mats = Array.isArray(child.material) ? child.material : [child.material];
+                            const matName = (mats[0]?.name || '').toLowerCase();
+                            if (matName.includes('wheel') || matName.includes('tyre') || matName.includes('tire')) {
+                                wheelMeshes.push(child);
+                            }
+                        }
+                    });
+
+                    scene.add(carModel);
+                    console.log('Rimac Nevera model loaded successfully');
+                },
+                (xhr) => {
+                    console.log('Loading: ' + (xhr.loaded / xhr.total * 100).toFixed(1) + '%');
+                },
+                (error) => {
+                    console.error('Error loading model:', error);
+                }
+            );
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        let driveMode = false;
+        let wheelMeshes = [];
+
+        function animate() {
+            if (!isAnimating) return;
+            requestAnimationFrame(animate);
+            controls.update();
+            if (driveMode && carModel) {
+                wheelMeshes.forEach(w => { w.rotation.x += 0.3; });
+                carModel.position.y = Math.sin(Date.now() * 0.01) * 0.005;
+            }
+            renderer.render(scene, camera);
+        }
+
+        function startAnimation() {
+            if (!isAnimating) {
+                isAnimating = true;
+                animate();
+            }
+        }
+
+        function stopAnimation() {
+            isAnimating = false;
+        }
+
+        function enableDriveMode() {
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 6;
+            document.getElementById('drive-mode').classList.add('drive-active');
+
+            if (carModel) {
+                carModel.traverse(c => {
+                    if (!c.isMesh || !c.material) return;
+                    const mats = Array.isArray(c.material) ? c.material : [c.material];
+                    mats.forEach(mat => {
+                        const mName = (mat.name || '').toLowerCase();
+                        if (!mat.emissive) return;
+                        if (!mat.userData._driveOrig) {
+                            mat.userData._driveOrig = {
+                                emissive: mat.emissive.clone(),
+                                emissiveIntensity: mat.emissiveIntensity,
+                                opacity: mat.opacity
+                            };
+                        }
+                        if (mName.includes('lighta_material')) {
+                            mat.emissive.set(0xccddff);
+                            mat.emissiveIntensity = 2;
+                            mat.needsUpdate = true;
+                        }
+                        if (mName === 'light_glass') {
+                            mat.emissive.set(0xccddff);
+                            mat.emissiveIntensity = 3;
+                            mat.needsUpdate = true;
+                        }
+                        if (mName === 'red_glass') {
+                            mat.emissive.set(0xff0000);
+                            mat.emissiveIntensity = 6;
+                            mat.opacity = 0.4;
+                            mat.needsUpdate = true;
+                        }
+                        if (mName === 'emiss_int') {
+                            mat.emissiveIntensity = 3;
+                            mat.needsUpdate = true;
+                        }
+                    });
+                });
+            }
+
+            if (!scene.userData._driveLights) {
+                const hL = new THREE.SpotLight(0xffffff, 3, 12, Math.PI/6, 0.5);
+                hL.position.set(-0.8, 0.6, 3); hL.target.position.set(-0.8, 0, 8);
+                scene.add(hL); scene.add(hL.target);
+                const hR = new THREE.SpotLight(0xffffff, 3, 12, Math.PI/6, 0.5);
+                hR.position.set(0.8, 0.6, 3); hR.target.position.set(0.8, 0, 8);
+                scene.add(hR); scene.add(hR.target);
+                const tL = new THREE.PointLight(0xff0000, 5, 6);
+                tL.position.set(-0.7, 0.6, -2.5); scene.add(tL);
+                const tR = new THREE.PointLight(0xff0000, 5, 6);
+                tR.position.set(0.7, 0.6, -2.5); scene.add(tR);
+                const iL = new THREE.PointLight(0xff6633, 0.8, 3);
+                iL.position.set(0, 1, 0.3); scene.add(iL);
+                scene.userData._driveLights = [hL, hL.target, hR, hR.target, tL, tR, iL];
+            }
+        }
+
+        function disableDriveMode() {
+            controls.autoRotateSpeed = 2;
+            document.getElementById('drive-mode').classList.remove('drive-active');
+
+            if (carModel) {
+                carModel.traverse(c => {
+                    if (!c.isMesh || !c.material) return;
+                    const mats = Array.isArray(c.material) ? c.material : [c.material];
+                    mats.forEach(mat => {
+                        if (mat.userData._driveOrig) {
+                            if (mat.emissive) mat.emissive.copy(mat.userData._driveOrig.emissive);
+                            mat.emissiveIntensity = mat.userData._driveOrig.emissiveIntensity;
+                            mat.opacity = mat.userData._driveOrig.opacity;
+                            mat.needsUpdate = true;
+                        }
+                    });
+                });
+            }
+
+            if (scene.userData._driveLights) {
+                scene.userData._driveLights.forEach(l => scene.remove(l));
+                scene.userData._driveLights = null;
+            }
+        }
+
+        // ==================== CAR COLOR CHANGE SYSTEM ====================
+        function setCarColor(hex) {
+            if (!carModel) return;
+            const color = new THREE.Color(hex);
+            carModel.traverse(c => {
+                if (!c.isMesh || !c.material) return;
+                const mats = Array.isArray(c.material) ? c.material : [c.material];
+                mats.forEach(mat => {
+                    if (!mat.isMeshStandardMaterial && !mat.isMeshPhysicalMaterial) return;
+                    if (mat.transparent && mat.opacity < 0.9) return;
+                    if (mat.metalness > 0.95 && mat.roughness < 0.08) return;
+                    const b = mat.color.r + mat.color.g + mat.color.b;
+                    if (b < 0.08) return;
+                    if (!mat.userData._origColor) mat.userData._origColor = mat.color.clone();
+                    mat.color.set(color);
+                    mat.needsUpdate = true;
+                });
+            });
+        }
+
+        function resetCarColor() {
+            if (!carModel) return;
+            carModel.traverse(c => {
+                if (!c.isMesh || !c.material) return;
+                const mats = Array.isArray(c.material) ? c.material : [c.material];
+                mats.forEach(mat => {
+                    if (mat.userData._origColor) {
+                        mat.color.copy(mat.userData._origColor);
+                        mat.needsUpdate = true;
+                    }
+                });
+            });
+        }
+
+
+        // Initialize Three.js
+        initThreeJS();
+
+        const floatingNav = document.getElementById('floating-nav');
+        const heroIntroVideo = document.getElementById('hero-intro-video');
+        const heroModel = document.getElementById('hero-model-canvas');
+        const show360Btn = document.getElementById('show-360');
+        const showVideoBtn = document.getElementById('show-video');
+        const backToTopBtn = document.getElementById('back-to-top');
+        const navLinks = document.querySelectorAll('.floating-link');
+        const NAV_SECTIONS = ['section-nevera','section-perf','section-overview','section-performance','section-details','section-showcase'];
+
+        function updateFloatingNav() {
+            const hero = document.querySelector('.hero-stage');
+            if (hero) {
+                const heroBottom = hero.getBoundingClientRect().bottom;
+                floatingNav.classList.toggle('visible', heroBottom < 100);
+            }
+        }
+
+        function updateActiveLink() {
+            const vh = window.innerHeight;
+            let bestId = NAV_SECTIONS[0], bestScore = -Infinity;
+            NAV_SECTIONS.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const rect = el.getBoundingClientRect();
+                const visible = Math.max(0, Math.min(rect.bottom, vh) - Math.max(rect.top, 0));
+                if (visible > bestScore) { bestScore = visible; bestId = id; }
+            });
+            navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + bestId));
+        }
+
+        const heroText = document.querySelector('.hero-text-vertical');
+        const colorControls = document.getElementById('color-controls');
+        const colorBtns = document.querySelectorAll('.color-btn');
+
+        function show360View() {
+            heroIntroVideo.pause();
+            heroIntroVideo.classList.add('hero-intro-video-hidden');
+            heroModel.classList.remove('hero-model-hidden');
+            // Start Three.js animation
+            startAnimation();
+            show360Btn.classList.add('hero-toggle-hidden');
+            showVideoBtn.classList.remove('hero-toggle-hidden');
+            // Show color controls
+            colorControls.classList.remove('color-controls-hidden');
+            // Hide hero text in 360 mode
+            if (heroText) {
+                heroText.style.opacity = '0';
+                heroText.style.pointerEvents = 'none';
+            }
+
+        }
+
+        function showVideoView() {
+            heroModel.classList.add('hero-model-hidden');
+            // Stop Three.js animation to save resources
+            stopAnimation();
+            heroIntroVideo.classList.remove('hero-intro-video-hidden');
+            heroIntroVideo.play().catch(() => {});
+            showVideoBtn.classList.add('hero-toggle-hidden');
+            show360Btn.classList.remove('hero-toggle-hidden');
+            // Hide color controls
+            colorControls.classList.add('color-controls-hidden');
+            // Show hero text in video mode
+            if (heroText) {
+                heroText.style.opacity = '1';
+                heroText.style.pointerEvents = 'auto';
+            }
+        }
+
+        // Color button click handlers
+        colorBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const color = btn.getAttribute('data-color');
+                setCarColor(color);
+                colorBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        document.getElementById('reset-color').addEventListener('click', () => {
+            resetCarColor();
+            colorBtns.forEach(b => b.classList.remove('active'));
+        });
+
+        show360Btn.addEventListener('click', show360View);
+        showVideoBtn.addEventListener('click', showVideoView);
+
+        document.getElementById('drive-mode').addEventListener('click', () => {
+            driveMode = !driveMode;
+            if (driveMode) enableDriveMode(); else disableDriveMode();
+        });
+
+        navLinks.forEach((link) => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        window.addEventListener('scroll', () => {
+            updateFloatingNav();
+            updateActiveLink();
+        });
+
+        updateFloatingNav();
+        updateActiveLink();
+
+        // Make all draggable elements work
+        function makeDraggable(element) {
+            let isDragging = false;
+            let startX, startY, initialX, initialY;
+
+            element.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                const rect = element.getBoundingClientRect();
+                initialX = rect.left;
+                initialY = rect.top;
+                element.style.position = 'fixed';
+                element.style.left = initialX + 'px';
+                element.style.top = initialY + 'px';
+                element.style.bottom = 'auto';
+                element.style.right = 'auto';
+                element.style.zIndex = '100';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                element.style.left = (initialX + dx) + 'px';
+                element.style.top = (initialY + dy) + 'px';
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    element.style.zIndex = '3';
+                }
+            });
+        }
+
+        // Apply draggable to moving text
+        const movingText = document.querySelector('.moving-text-left');
+        if (movingText) {
+            makeDraggable(movingText);
+        }
+
+        // Apply draggable to all floating text elements
+        const draggableElements = document.querySelectorAll('[data-draggable]');
+        draggableElements.forEach((el) => {
+            makeDraggable(el);
+        });
+
+        // Image blur-to-sharp on load effect
+        const lazyImages = document.querySelectorAll('.detail-fullwidth-media img[loading="lazy"]');
+        lazyImages.forEach((img) => {
+            if (img.complete) {
+                img.classList.add('loaded');
+            } else {
+                img.addEventListener('load', () => {
+                    img.classList.add('loaded');
+                });
+            }
+        });
+
+        // ==================== GSAP CINEMATIC SCROLL ANIMATIONS ====================
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Moving section text animation
+        gsap.set('.moving-text-left', { opacity: 0, y: 40 });
+        ScrollTrigger.create({
+            trigger: '#section-moving',
+            start: 'top 60%',
+            onEnter: () => {
+                gsap.to('.moving-text-left', {
+                    opacity: 1, y: 0, duration: 1, ease: 'power3.out'
+                });
+            }
+        });
+
+        // ==================== ALL SECTIONS BELOW MOVING - SAME CINEMATIC TRANSITION ====================
+        const cinematicSections = [
+            document.getElementById('section-overview'),
+            document.getElementById('section-performance'),
+            ...document.querySelectorAll('.detail-fullwidth-block')
+        ];
+
+        cinematicSections.forEach((section, index) => {
+            if (!section) return;
+
+            const text = section.querySelector('.aero-floating-copy') || section.querySelector('.floating-text-clean');
+            const isLast = index === cinematicSections.length - 1;
+
+            section.style.zIndex = index + 10;
+
+            if (text) {
+                gsap.set(text, { opacity: 0, y: 40 });
+            }
+
+            if (index === 0) {
+                ScrollTrigger.create({
+                    trigger: section,
+                    start: 'top top',
+                    end: '+=100%',
+                    pin: true,
+                    pinSpacing: false,
+                    onEnter: () => {
+                        if (text) {
+                            gsap.to(text, {
+                                opacity: 1, y: 0, duration: 0.8, ease: 'power2.out'
+                            });
+                        }
+                    }
+                });
+            } else {
+                const prevSection = cinematicSections[index - 1];
+
+                gsap.set(section, { yPercent: 100 });
+
+                gsap.to(section, {
+                    yPercent: 0,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: prevSection,
+                        start: 'top top',
+                        end: '+=100%',
+                        scrub: true
+                    }
+                });
+
+                ScrollTrigger.create({
+                    trigger: section,
+                    start: 'top 70%',
+                    onEnter: () => {
+                        if (text) {
+                            gsap.to(text, {
+                                opacity: 1, y: 0, duration: 0.8, ease: 'power2.out'
+                            });
+                        }
+                    }
+                });
+
+                if (!isLast) {
+                    ScrollTrigger.create({
+                        trigger: section,
+                        start: 'top top',
+                        end: '+=100%',
+                        pin: true,
+                        pinSpacing: false
+                    });
+                }
+            }
+        });
+
+        // ==================== HORIZONTAL SCROLL SHOWCASE ====================
+        const strip = document.getElementById('showcase-strip');
+        if (strip) {
+            const totalWidth = strip.scrollWidth - strip.parentElement.offsetWidth;
+            gsap.to(strip, {
+                x: -totalWidth,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#section-showcase',
+                    start: 'top top',
+                    end: () => '+=' + (totalWidth + window.innerHeight),
+                    pin: true,
+                    pinSpacing: true,
+                    scrub: 1
+                }
+            });
+        }
+
+        // Showcase text entrance
+        gsap.set('.showcase-content', { opacity: 0, y: 50 });
+        ScrollTrigger.create({
+            trigger: '#section-showcase',
+            start: 'top 80%',
+            onEnter: () => gsap.to('.showcase-content', { opacity: 1, y: 0, duration: 1, ease: 'power3.out' })
+        });
+
+// ==================== HOME TRANSITION ====================
+document.querySelectorAll('.hero-home-btn, .car-page-footer-link').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const overlay = document.getElementById('home-transition');
+        overlay.classList.add('active');
+        setTimeout(() => { window.location.href = '../index.html'; }, 600);
+    });
+});
+    </script>
+</body>
+</html>

@@ -1,0 +1,453 @@
+<!--
+  REVV — Splash / Intro Page
+  Chrome wing logo assembly animation → fade to index.html
+  Self-contained: all CSS + JS inline
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REVV</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@300;400;500&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        /* ===== PARTICLES ===== */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        .particle--white {
+            background: rgba(255, 255, 255, 0.35);
+            animation: particleRise 5s ease-out forwards;
+        }
+
+        .particle--warm {
+            background: rgba(255, 180, 100, 0.3);
+            animation: particleRise 6s ease-out forwards;
+        }
+
+        .particle--cool {
+            background: rgba(140, 180, 255, 0.25);
+            animation: particleRise 5.5s ease-out forwards;
+        }
+
+        @keyframes particleRise {
+            0%   { opacity: 0; transform: translateY(60px) scale(0); }
+            15%  { opacity: 0.6; }
+            80%  { opacity: 0.2; }
+            100% { opacity: 0; transform: translateY(-200px) scale(1.2); }
+        }
+
+        /* ===== AMBIENT LIGHT ===== */
+        .ambient {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0;
+        }
+
+        .ambient-orb--1 {
+            width: 400px;
+            height: 400px;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.06), transparent 70%);
+            animation: ambientFade 2.5s 0.2s ease-out forwards;
+        }
+
+        .ambient-orb--2 {
+            width: 250px;
+            height: 250px;
+            top: 55%;
+            left: 35%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(200, 160, 100, 0.04), transparent 70%);
+            animation: ambientFade 3s 0.8s ease-out forwards;
+        }
+
+        .ambient-orb--3 {
+            width: 250px;
+            height: 250px;
+            top: 45%;
+            left: 65%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(100, 150, 220, 0.04), transparent 70%);
+            animation: ambientFade 3s 1s ease-out forwards;
+        }
+
+        @keyframes ambientFade {
+            0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* ===== LOGO CONTAINER ===== */
+        .logo-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+        }
+
+        /* ===== LOGO GLOW ===== */
+        .logo-glow {
+            position: absolute;
+            width: 500px;
+            height: 250px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.08) 0%, transparent 60%);
+            filter: blur(40px);
+            opacity: 0;
+            animation: glowPulse 2s ease-out 0.5s forwards;
+        }
+
+        @keyframes glowPulse {
+            0%   { opacity: 0; transform: scale(0.5); }
+            50%  { opacity: 0.9; transform: scale(1.1); }
+            100% { opacity: 0.5; transform: scale(1); }
+        }
+
+        /* ===== SVG LOGO ===== */
+        .revv-logo {
+            width: 280px;
+            height: 140px;
+            position: relative;
+            overflow: visible;
+            transition: all 0.8s ease;
+        }
+
+        .revv-logo.assembled {
+            width: 180px;
+            height: 90px;
+        }
+
+        /* Chrome metallic gradient definitions are in the SVG */
+        .wing-left {
+            opacity: 0;
+            transform: translateX(-100px);
+            animation: wingFromLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+        }
+
+        @keyframes wingFromLeft {
+            0%   { opacity: 0; transform: translateX(-100px); filter: blur(10px); }
+            60%  { opacity: 1; transform: translateX(5px); filter: blur(0); }
+            100% { opacity: 1; transform: translateX(0); filter: blur(0); }
+        }
+
+        .wing-right {
+            opacity: 0;
+            transform: translateX(100px);
+            animation: wingFromRight 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+        }
+
+        @keyframes wingFromRight {
+            0%   { opacity: 0; transform: translateX(100px); filter: blur(10px); }
+            60%  { opacity: 1; transform: translateX(-5px); filter: blur(0); }
+            100% { opacity: 1; transform: translateX(0); filter: blur(0); }
+        }
+
+        .core {
+            opacity: 0;
+            transform: scale(0);
+            animation: coreAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;
+        }
+
+        @keyframes coreAppear {
+            0%   { opacity: 0; transform: scale(0); }
+            50%  { opacity: 1; transform: scale(1.3); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Chrome light sweep across logo */
+        .revv-logo.assembled .wing-left,
+        .revv-logo.assembled .wing-right,
+        .revv-logo.assembled .core {
+            opacity: 1;
+            animation: chromePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes chromePulse {
+            0%, 100% { filter: drop-shadow(0 0 4px rgba(255,255,255,0.1)); opacity: 1; }
+            50%      { filter: drop-shadow(0 0 18px rgba(255,255,255,0.35)); opacity: 1; }
+        }
+
+        /* Light sweep overlay */
+        .light-sweep {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255,255,255,0.08) 40%,
+                rgba(255,255,255,0.18) 50%,
+                rgba(255,255,255,0.08) 60%,
+                transparent 100%
+            );
+            pointer-events: none;
+            z-index: 11;
+            opacity: 0;
+            animation: sweepAcross 1.8s ease-in-out 1.6s forwards;
+        }
+
+        @keyframes sweepAcross {
+            0%   { left: -100%; opacity: 1; }
+            100% { left: 100%; opacity: 0.6; }
+        }
+
+        /* ===== WORDMARK ===== */
+        .wordmark {
+            margin-top: 12px;
+            opacity: 0;
+            transform: translateY(12px);
+            animation: wordmarkIn 0.8s ease-out 2s forwards;
+        }
+
+        .wordmark-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.8rem;
+            letter-spacing: 18px;
+            color: transparent;
+            background: linear-gradient(180deg, #e8e4de 0%, #a8a49e 50%, #d4d0ca 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            text-indent: 18px; /* offset for visual centering with letter-spacing */
+        }
+
+        @keyframes wordmarkIn {
+            0%   { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== TAGLINE ===== */
+        .tagline {
+            margin-top: 10px;
+            opacity: 0;
+            transform: translateY(8px);
+            animation: taglineIn 0.8s ease-out 2.4s forwards;
+        }
+
+        .tagline-text {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 300;
+            letter-spacing: 6px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+        }
+
+        @keyframes taglineIn {
+            0%   { opacity: 0; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== DIVIDER LINE ===== */
+        .divider {
+            width: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            margin-top: 18px;
+            animation: dividerGrow 0.6s ease-out 2.2s forwards;
+        }
+
+        @keyframes dividerGrow {
+            0%   { width: 0; opacity: 0; }
+            100% { width: 120px; opacity: 1; }
+        }
+
+        /* ===== TRANSITION OVERLAY ===== */
+        .transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+        }
+
+        .transition-overlay.active {
+            opacity: 1;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .revv-logo {
+                width: 200px;
+                height: 100px;
+            }
+
+            .logo-glow {
+                width: 300px;
+                height: 150px;
+            }
+
+            .wordmark-text {
+                font-size: 2rem;
+                letter-spacing: 14px;
+                text-indent: 14px;
+            }
+
+            .tagline-text {
+                font-size: 0.6rem;
+                letter-spacing: 4px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ambient">
+        <div class="ambient-orb ambient-orb--1"></div>
+        <div class="ambient-orb ambient-orb--2"></div>
+        <div class="ambient-orb ambient-orb--3"></div>
+    </div>
+
+    <div class="particles" id="particles"></div>
+    <div class="transition-overlay" id="transition-overlay"></div>
+
+    <div class="logo-container">
+        <div class="logo-glow"></div>
+        <div class="light-sweep"></div>
+
+        <svg class="revv-logo" id="revv-logo" viewBox="0 0 100 50">
+            <defs>
+                <!-- Chrome metallic gradient for left wing -->
+                <linearGradient id="chrome-left" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%"   stop-color="#e8e4de"/>
+                    <stop offset="30%"  stop-color="#ffffff"/>
+                    <stop offset="50%"  stop-color="#b8b4ae"/>
+                    <stop offset="70%"  stop-color="#ffffff"/>
+                    <stop offset="100%" stop-color="#d4d0ca"/>
+                </linearGradient>
+                <!-- Darker chrome for right wing -->
+                <linearGradient id="chrome-right" x1="100%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%"   stop-color="#8a8680"/>
+                    <stop offset="30%"  stop-color="#c4c0ba"/>
+                    <stop offset="50%"  stop-color="#5a5854"/>
+                    <stop offset="70%"  stop-color="#a8a49e"/>
+                    <stop offset="100%" stop-color="#6e6c68"/>
+                </linearGradient>
+                <!-- Core diamond gradient -->
+                <linearGradient id="chrome-core" x1="50%" y1="0%" x2="50%" y2="100%">
+                    <stop offset="0%"   stop-color="#ffffff"/>
+                    <stop offset="50%"  stop-color="#d4d0ca"/>
+                    <stop offset="100%" stop-color="#ffffff"/>
+                </linearGradient>
+            </defs>
+
+            <path class="wing-left"  fill="url(#chrome-left)"  d="M10 25C30 15 45 15 50 25C40 25 25 25 5 35L10 25Z"/>
+            <path class="wing-right" fill="url(#chrome-right)" stroke="rgba(255,255,255,0.2)" stroke-width="0.3" d="M50 25C55 15 70 15 90 25L95 35C75 25 60 25 50 35V25Z"/>
+            <path class="core"       fill="url(#chrome-core)"  d="M30 25L50 15L70 25L50 35L30 25Z"/>
+        </svg>
+
+        <div class="divider"></div>
+
+        <div class="wordmark">
+            <span class="wordmark-text">REVV</span>
+        </div>
+
+        <div class="tagline">
+            <span class="tagline-text">The Ultimate Automotive Experience</span>
+        </div>
+    </div>
+
+    <script>
+        const particlesContainer = document.getElementById('particles');
+        const types = ['particle--white', 'particle--warm', 'particle--cool'];
+
+        function createParticle() {
+            const particle = document.createElement('div');
+            const type = types[Math.floor(Math.random() * types.length)];
+            const size = 1.5 + Math.random() * 2.5;
+
+            particle.className = 'particle ' + type;
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.bottom = '0';
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.animationDelay = Math.random() * 2 + 's';
+            particle.style.animationDuration = (4 + Math.random() * 3) + 's';
+            particlesContainer.appendChild(particle);
+            setTimeout(() => particle.remove(), 8000);
+        }
+
+        // Initial burst
+        for (let i = 0; i < 20; i++) {
+            setTimeout(() => createParticle(), i * 150);
+        }
+
+        // Continuous particles
+        const particleInterval = setInterval(() => createParticle(), 300);
+
+        // Logo pulse after assembly
+        const logo = document.getElementById('revv-logo');
+        setTimeout(() => {
+            logo.classList.add('assembled');
+        }, 1800);
+
+        const transitionOverlay = document.getElementById('transition-overlay');
+
+        const logoHoldTime = new Promise(resolve => setTimeout(resolve, 3800));
+
+        const assetsPreloading = fetch('index.html')
+            .then(response => response.ok ? Promise.resolve() : Promise.reject())
+            .catch(() => Promise.resolve());
+
+        Promise.all([logoHoldTime, assetsPreloading]).then(() => {
+            clearInterval(particleInterval);
+            transitionOverlay.classList.add('active');
+
+            setTimeout(() => {
+                window.location.replace('index.html');
+            }, 400);
+        });
+    </script>
+</body>
+</html>
