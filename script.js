@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Hidden video element for preloading the next car
     const preloadVideoEl  = document.createElement('video');
-    preloadVideoEl.preload = 'auto';
+    preloadVideoEl.preload = 'metadata';
     preloadVideoEl.muted = true;
     preloadVideoEl.playsInline = true;
     preloadVideoEl.style.display = 'none';
@@ -124,24 +124,36 @@ document.addEventListener('DOMContentLoaded', () => {
         return queue.shift();
     }
 
-    function preloadNextCarVideo(car) {
-        if (!car) return;
-        preloadVideoEl.src = car.video;
-        preloadVideoEl.load();
-    }
+function preloadNextCarVideo(car) {
+    if (!car) return;
 
-    function applyHeroCar(car) {
-        currentCar = car;
-        gsap.fromTo('.car-dynamic-info', { y: 56, opacity: 0 }, { y: 0, opacity: 1, duration: 0.95, ease: "power3.out" });
-        carNameEl.textContent = car.name;
-        carTaglineEl.textContent = car.tagline;
-        setTimeout(() => {
-            carVideoSourceEl.src = car.video;
-            carVideoEl.load();
-            carVideoEl.play().catch(() => {});
-        }, 120);
-    }
+    preloadVideoEl.pause();
 
+    preloadVideoEl.removeAttribute('src');
+    preloadVideoEl.load();
+
+    preloadVideoEl.preload = 'metadata';
+    preloadVideoEl.src = car.video;
+}
+
+function applyHeroCar(car) {
+    currentCar = car;
+
+    gsap.fromTo(
+        '.car-dynamic-info',
+        { y: 56, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.95, ease: "power3.out" }
+    );
+
+    carNameEl.textContent = car.name;
+    carTaglineEl.textContent = car.tagline;
+
+    setTimeout(() => {
+        carVideoSourceEl.src = car.video;
+
+        carVideoEl.play().catch(() => {});
+    }, 120);
+}
     function playNextInRotation() {
         applyHeroCar(nextCar || getNextCar());
         nextCar = getNextCar();
