@@ -23,6 +23,7 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/loading-states.css">
 </head>
 
 <body>
@@ -79,16 +80,9 @@
 
         <!-- Hero Immersive Display -->
         <div class="hero-immersive-display">
-            <div class="car-display-container">
-            <video
-              class="cycling-car-video"
-              id="hero-car-video"
-              autoplay
-              muted
-              playsinline
-              preload="metadata"
-            >                  
-              <source id="hero-car-video-source" src="assets/videos/ferrari-landing.mp4" type="video/mp4">
+            <div class="car-display-container is-loading">
+                <video class="cycling-car-video" id="hero-car-video" autoplay muted playsinline preload="metadata">
+                    <source id="hero-car-video-source" src="assets/videos/ferrari-landing.mp4" type="video/mp4">
                 </video>
             </div>
 
@@ -330,7 +324,26 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/video-handler.js"></script>
     <script src="script.js"></script>
+    <script>
+      // Initialize video loading states for the landing page
+      if (window.REVV && window.REVV.videoHandler) {
+        REVV.videoHandler.init({ accentColor: '#e8e4de' });
+      }
+      // Remove loading shimmer once hero video can play
+      var heroVideo = document.getElementById('hero-car-video');
+      var heroContainer = document.querySelector('.car-display-container');
+      if (heroVideo && heroContainer) {
+        heroVideo.addEventListener('canplay', function() {
+          heroContainer.classList.remove('is-loading');
+        });
+        heroVideo.addEventListener('playing', function() {
+          heroContainer.classList.remove('is-loading');
+        });
+      }
+    </script>
 </body>
 
 </html>

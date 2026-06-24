@@ -1,0 +1,370 @@
+/* ============================================================
+   REVV — Loading States & Feedback Styles
+   Shared across all pages for loading, skeleton, toast,
+   loader ring, video error, and buffering states.
+   ============================================================ */
+
+/* ==================== KEYFRAMES ==================== */
+
+@keyframes revv-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes revv-toast-enter {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes revv-toast-exit {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+}
+
+@keyframes revv-pulse {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes revv-ring-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==================== SHIMMER / IS-LOADING ==================== */
+
+.is-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.is-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 20%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.03) 80%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: revv-shimmer 2s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ==================== BUFFERING PULSE ==================== */
+
+.is-buffering {
+  position: relative;
+}
+
+.is-buffering::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 15, 0.5);
+  animation: revv-pulse 1.8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ==================== SKELETON SHAPES ==================== */
+
+.revv-skeleton--video,
+.revv-skeleton--canvas {
+  background: linear-gradient(135deg, #0a0a0f 0%, #15151a 100%);
+  border-radius: 4px;
+}
+
+.revv-skeleton--video {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+}
+
+.revv-skeleton--canvas {
+  width: 100%;
+  height: 100vh;
+}
+
+/* ==================== TOAST CONTAINER ==================== */
+
+.revv-toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+  max-width: 380px;
+}
+
+/* ==================== TOAST COMPONENT ==================== */
+
+.revv-toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(20, 20, 25, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent, #8cb8e8);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  color: #f5f3ef;
+  pointer-events: auto;
+  animation: revv-toast-enter 300ms ease-out forwards;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  max-width: 100%;
+}
+
+.revv-toast--entering {
+  animation: revv-toast-enter 300ms ease-out forwards;
+}
+
+.revv-toast--exiting {
+  animation: revv-toast-exit 250ms ease-in forwards;
+}
+
+/* Toast type colors */
+.revv-toast--error {
+  border-left-color: #ff3b3b;
+}
+
+.revv-toast--warning {
+  border-left-color: #ffb020;
+}
+
+.revv-toast--info {
+  border-left-color: var(--accent, #8cb8e8);
+}
+
+/* Toast icon */
+.revv-toast__icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.revv-toast--error .revv-toast__icon {
+  color: #ff3b3b;
+}
+
+.revv-toast--warning .revv-toast__icon {
+  color: #ffb020;
+}
+
+.revv-toast--info .revv-toast__icon {
+  color: var(--accent, #8cb8e8);
+}
+
+/* Toast body */
+.revv-toast__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.revv-toast__message {
+  margin: 0;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+/* Toast buttons */
+.revv-toast__retry {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f5f3ef;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.revv-toast__retry:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.revv-toast__close {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: rgba(245, 243, 239, 0.5);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color 0.2s ease;
+}
+
+.revv-toast__close:hover {
+  color: #f5f3ef;
+}
+
+/* ==================== LOADER OVERLAY ==================== */
+
+.revv-loader-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 7, 10, 0.8);
+  z-index: 10;
+  transition: opacity 0.4s ease;
+}
+
+.revv-loader-overlay--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ==================== LOADER RING ==================== */
+
+.revv-loader-ring {
+  width: 88px;
+  height: 88px;
+}
+
+.revv-loader-ring__track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 6;
+}
+
+.revv-loader-ring__progress {
+  fill: none;
+  stroke: var(--accent, #8cb8e8);
+  stroke-width: 6;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+/* Indeterminate spinner state (when total is unknown) */
+.revv-loader-ring--indeterminate {
+  animation: revv-ring-spin 1.4s linear infinite;
+}
+
+.revv-loader-ring--indeterminate .revv-loader-ring__progress {
+  stroke-dasharray: 80 276.46;
+  stroke-dashoffset: 0;
+  transition: none;
+}
+
+/* Loader percent text */
+.revv-loader-percent {
+  margin-top: 12px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #f5f3ef;
+  letter-spacing: 0.5px;
+}
+
+/* ==================== VIDEO ERROR ==================== */
+
+.revv-video-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px 24px;
+  background: linear-gradient(135deg, #0a0a0f 0%, #15151a 100%);
+  border-radius: 4px;
+  text-align: center;
+  width: 100%;
+  min-height: 120px;
+}
+
+.revv-video-error__msg {
+  margin: 0;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(245, 243, 239, 0.7);
+  letter-spacing: 0.3px;
+}
+
+.revv-video-error__retry {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f5f3ef;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.revv-video-error__retry:hover {
+  border-color: var(--accent, #8cb8e8);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 480px) {
+  .revv-toast-container {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    max-width: none;
+    align-items: stretch;
+  }
+
+  .revv-toast {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+}
