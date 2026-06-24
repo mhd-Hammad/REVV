@@ -1,2 +1,9 @@
 .kiro/
 .vscode/
+node_modules/
+package.json
+package-lock.json
+upload-videos.js
+replace-video-urls.js
+cloudinary-urls.json
+assets/videos/
