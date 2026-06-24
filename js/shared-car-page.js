@@ -297,8 +297,15 @@ window.REVV = window.REVV || {};
     var heroText = document.querySelector('.hero-text-vertical');
     var colorControls = document.getElementById('color-controls');
 
+    var modelLoaded = false;
+
     if (show360Btn) {
       show360Btn.addEventListener('click', function () {
+        // Load 3D model on FIRST click only (not on page load)
+        if (!modelLoaded && typeof THREE !== 'undefined') {
+          modelLoaded = true;
+          loadModel(config);
+        }
         if (heroIntroVideo) {
           heroIntroVideo.pause();
           heroIntroVideo.classList.add('hero-intro-video-hidden');
@@ -770,11 +777,11 @@ window.REVV = window.REVV || {};
     if (typeof THREE !== 'undefined') {
       initThreeJS(config);
 
-      // 5. Model Loading — starts immediately
-      loadModel(config);
+      // 5. Model Loading — DEFERRED until user clicks 360° button
+      // Model is NOT loaded on page load to prevent blocking CSS/video/images
     }
 
-    // 6. 360° / Video Toggle
+    // 6. 360° / Video Toggle (passes config so model loads on first 360° click)
     init360VideoToggle(config);
 
     // 7. Color Change
