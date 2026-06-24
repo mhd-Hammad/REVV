@@ -14,6 +14,7 @@ window.REVV = window.REVV || {};
 
   /**
    * Initialize video handler for all <video> elements on the page.
+   * Videos below the fold are lazy-loaded (src removed until scrolled into view).
    * @param {Object} [options]
    * @param {string} [options.accentColor] - Brand accent for shimmer highlight
    * @param {string} [options.posterFallback] - Data URI or path for poster
@@ -23,8 +24,80 @@ window.REVV = window.REVV || {};
     var videos = document.querySelectorAll('video');
 
     for (var i = 0; i < videos.length; i++) {
-      handleVideo(videos[i], opts);
+      var video = videos[i];
+      var isHeroVideo = video.id === 'hero-intro-video' || video.id === 'hero-car-video';
+
+      if (isHeroVideo) {
+        // Hero videos load immediately
+        handleVideo(video, opts);
+      } else {
+        // Off-screen videos: defer loading until visible
+        deferVideo(video, opts);
+      }
     }
+  }
+
+  /**
+   * Defer a video's loading until it scrolls into view.
+   * Stores the src, removes it, and restores when visible.
+   */
+  function deferVideo(videoEl, opts) {
+    if (!videoEl || videoEl._revvDeferred) return;
+    videoEl._revvDeferred = true;
+
+    // Store original src and remove it to prevent download
+    var originalSrc = videoEl.getAttribute('src') || '';
+    var sourceEl = videoEl.querySelector('source');
+    var sourceSrc = sourceEl ? sourceEl.getAttribute('src') : '';
+
+    if (originalSrc) {
+      videoEl.removeAttribute('src');
+      videoEl.setAttribute('data-src', originalSrc);
+    }
+    if (sourceEl && sourceSrc) {
+      sourceEl.removeAttribute('src');
+      sourceEl.setAttribute('data-src', sourceSrc);
+    }
+
+    // Set preload to none
+    videoEl.preload = 'none';
+
+    // Set poster placeholder
+    var poster = opts.posterFallback || DEFAULT_POSTER;
+    videoEl.setAttribute('poster', poster);
+
+    // Use IntersectionObserver to load when visible
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            observer.unobserve(videoEl);
+            restoreAndPlay(videoEl, originalSrc, sourceEl, sourceSrc, opts);
+          }
+        });
+      }, { rootMargin: '200px' }); // Start loading 200px before visible
+
+      observer.observe(videoEl);
+    } else {
+      // Fallback: just load immediately if no IntersectionObserver
+      restoreAndPlay(videoEl, originalSrc, sourceEl, sourceSrc, opts);
+    }
+  }
+
+  /**
+   * Restore video src and begin playback.
+   */
+  function restoreAndPlay(videoEl, originalSrc, sourceEl, sourceSrc, opts) {
+    if (originalSrc) {
+      videoEl.src = originalSrc;
+    }
+    if (sourceEl && sourceSrc) {
+      sourceEl.src = sourceSrc;
+    }
+    videoEl.preload = 'metadata';
+    videoEl.load();
+    videoEl.play().catch(function () {});
+    handleVideo(videoEl, opts);
   }
 
   /**
