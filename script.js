@@ -150,7 +150,7 @@ function applyHeroCar(car) {
 
     setTimeout(() => {
         carVideoSourceEl.src = car.video;
-
+        carVideoEl.load();
         carVideoEl.play().catch(() => {});
     }, 120);
 }
