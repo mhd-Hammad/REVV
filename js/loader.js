@@ -70,17 +70,26 @@ window.REVV = window.REVV || {};
 
   /**
    * Sets the overlay to indeterminate mode (no Content-Length available).
+   * Shows sliding bar but keeps percentage text visible with bytes loaded.
    * @param {HTMLElement} overlay - The overlay element
    */
   function setIndeterminate(overlay) {
     var bar = overlay.querySelector('.revv-loader-bar');
-    var percentText = overlay.querySelector('.revv-loader-percent');
 
     if (bar) {
       bar.classList.add('revv-loader-bar--indeterminate');
     }
+    // Keep percentage text visible — will show MB loaded instead
+  }
+
+  /**
+   * Updates percentage in indeterminate mode (shows MB loaded).
+   */
+  function updateIndeterminateProgress(overlay, bytesLoaded) {
+    var percentText = overlay.querySelector('.revv-loader-percent');
     if (percentText) {
-      percentText.textContent = '';
+      var mb = (bytesLoaded / 1024 / 1024).toFixed(1);
+      percentText.textContent = mb + ' MB loaded';
     }
   }
 
@@ -208,11 +217,12 @@ window.REVV = window.REVV || {};
         // onProgress callback
         function (xhr) {
           if (xhr.total === 0) {
-            // No Content-Length header — use indeterminate spinner
+            // No Content-Length header — use indeterminate bar + show MB loaded
             if (!indeterminateSet) {
               setIndeterminate(overlay);
               indeterminateSet = true;
             }
+            updateIndeterminateProgress(overlay, xhr.loaded);
           } else {
             var percent = (xhr.loaded / xhr.total) * 100;
             updateProgress(overlay, percent);
@@ -225,10 +235,9 @@ window.REVV = window.REVV || {};
 
         // onError callback
         function (error) {
-          // Hide the progress ring from overlay
-          var ring = overlay.querySelector('.revv-loader-ring');
-          var percentText = overlay.querySelector('.revv-loader-percent');
-          if (ring) ring.style.display = 'none';
+          // Hide the loader content from overlay
+          var loaderContent = overlay.querySelector('.revv-loader-content');
+          if (loaderContent) loaderContent.style.display = 'none';
           if (percentText) percentText.style.display = 'none';
 
           // Retry function re-invokes loadModel with same options
