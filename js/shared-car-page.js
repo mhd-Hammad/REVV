@@ -299,6 +299,23 @@ window.REVV = window.REVV || {};
 
     var modelLoaded = false;
     var threeInitialized = false;
+    var modelPreloading = false;
+
+    // Preload model on HOVER over 360° button (start download early)
+    if (show360Btn) {
+      show360Btn.addEventListener('mouseenter', function () {
+        if (!modelPreloading && typeof THREE !== 'undefined') {
+          modelPreloading = true;
+          // Start fetching the GLB file into browser cache
+          var link = document.createElement('link');
+          link.rel = 'prefetch';
+          link.href = config.modelPath;
+          link.as = 'fetch';
+          link.crossOrigin = 'anonymous';
+          document.head.appendChild(link);
+        }
+      });
+    }
 
     if (show360Btn) {
       show360Btn.addEventListener('click', function () {
