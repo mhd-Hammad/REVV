@@ -297,10 +297,9 @@ function applyHeroCar(car) {
         overlay.getBoundingClientRect(); // force paint
         document.body.classList.add('transitioning');
 
-        // Animate logo in → fade out → navigate
+        // Animate logo in → navigate quickly (page loads behind overlay)
         setTimeout(() => { logo.style.opacity = '1'; logo.style.transform = 'scale(1.05)'; logo.style.filter = `drop-shadow(0 0 25px ${theme.accent})`; }, 50);
-        setTimeout(() => { overlay.classList.add('fade-out'); }, 900);
-        setTimeout(() => { overlay.style.pointerEvents = 'none'; window.location.replace(targetUrl); }, 920);
+        setTimeout(() => { window.location.replace(targetUrl); }, 500);
     }
 
     // Map page filenames to brand keys
@@ -313,6 +312,20 @@ function applyHeroCar(car) {
         'pages/mclaren-p1.html': 'mclaren',
         'pages/pagani-huayra.html': 'pagani'
     };
+
+    // Prefetch car pages on hover (loads HTML + CSS in background)
+    const prefetched = new Set();
+    document.querySelectorAll('.car-details-btn').forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            const url = this.getAttribute('href');
+            if (prefetched.has(url)) return;
+            prefetched.add(url);
+            const link = document.createElement('link');
+            link.rel = 'prefetch';
+            link.href = url;
+            document.head.appendChild(link);
+        });
+    });
 
     // Intercept DETAILS button clicks → play brand intro then navigate
     document.querySelectorAll('.car-details-btn').forEach(btn => {
