@@ -298,10 +298,15 @@ window.REVV = window.REVV || {};
     var colorControls = document.getElementById('color-controls');
 
     var modelLoaded = false;
+    var threeInitialized = false;
 
     if (show360Btn) {
       show360Btn.addEventListener('click', function () {
-        // Load 3D model on FIRST click only (not on page load)
+        // Initialize Three.js scene + load model on FIRST click only
+        if (!threeInitialized && typeof THREE !== 'undefined') {
+          threeInitialized = true;
+          initThreeJS(config);
+        }
         if (!modelLoaded && typeof THREE !== 'undefined') {
           modelLoaded = true;
           loadModel(config);
@@ -773,13 +778,12 @@ window.REVV = window.REVV || {};
     // 3. Zoom Prevention
     initZoomPrevention(config.canvasId);
 
-    // 4. Three.js Scene Setup (if THREE available)
-    if (typeof THREE !== 'undefined') {
-      initThreeJS(config);
+    // 4. Three.js Scene Setup — DEFERRED to 360° button click
+    // Do NOT init Three.js on page load. It creates WebGL context + loads shaders
+    // which blocks other resources. Only init when user actually wants 3D.
 
-      // 5. Model Loading — DEFERRED until user clicks 360° button
-      // Model is NOT loaded on page load to prevent blocking CSS/video/images
-    }
+    // 5. Model Loading — DEFERRED until user clicks 360° button
+    // Model is NOT loaded on page load to prevent blocking CSS/video/images
 
     // 6. 360° / Video Toggle (passes config so model loads on first 360° click)
     init360VideoToggle(config);
