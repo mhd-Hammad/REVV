@@ -298,9 +298,9 @@ function applyHeroCar(car) {
         overlay.getBoundingClientRect(); // force paint
         document.body.classList.add('transitioning');
 
-        // Animate logo in → navigate quickly (page loads behind overlay)
+        // Animate logo in → hold briefly → navigate (page loads behind overlay)
         setTimeout(() => { logo.style.opacity = '1'; logo.style.transform = 'scale(1.05)'; logo.style.filter = `drop-shadow(0 0 25px ${theme.accent})`; }, 50);
-        setTimeout(() => { window.location.replace(targetUrl); }, 500);
+        setTimeout(() => { window.location.replace(targetUrl); }, 1200);
     }
 
     // Map page filenames to brand keys
