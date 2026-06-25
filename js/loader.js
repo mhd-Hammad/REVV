@@ -68,9 +68,20 @@ window.REVV = window.REVV || {};
     }
   }
 
+  // Known model sizes in bytes (for percentage estimation when Content-Length unavailable)
+  var KNOWN_MODEL_SIZES = {
+    'bugatti.glb': 16352620,
+    'ferrari.glb': 19189000,
+    'lamborghini.glb': 20555000,
+    'mclaren_p1.glb': 11952000,
+    'pagani.glb': 3250000,
+    'porsche.glb': 20764000,
+    'rimac.glb': 13738000
+  };
+
   /**
    * Sets the overlay to indeterminate mode (no Content-Length available).
-   * Shows sliding bar but keeps percentage text visible with bytes loaded.
+   * Shows sliding bar but estimates percentage from known model sizes.
    * @param {HTMLElement} overlay - The overlay element
    */
   function setIndeterminate(overlay) {
@@ -79,17 +90,28 @@ window.REVV = window.REVV || {};
     if (bar) {
       bar.classList.add('revv-loader-bar--indeterminate');
     }
-    // Keep percentage text visible — will show MB loaded instead
   }
 
   /**
-   * Updates percentage in indeterminate mode (shows MB loaded).
+   * Updates percentage using estimated total from known model sizes.
    */
-  function updateIndeterminateProgress(overlay, bytesLoaded) {
+  function updateIndeterminateProgress(overlay, bytesLoaded, modelPath) {
     var percentText = overlay.querySelector('.revv-loader-percent');
+    var barFill = overlay.querySelector('.revv-loader-bar__fill');
+    var bar = overlay.querySelector('.revv-loader-bar');
+
+    // Extract filename from path
+    var fileName = modelPath ? modelPath.split('/').pop() : '';
+    var estimatedTotal = KNOWN_MODEL_SIZES[fileName] || 15000000; // default 15MB
+
+    var percent = Math.min(99, Math.round((bytesLoaded / estimatedTotal) * 100));
+
     if (percentText) {
-      var mb = (bytesLoaded / 1024 / 1024).toFixed(1);
-      percentText.textContent = mb + ' MB loaded';
+      percentText.textContent = percent + '%';
+    }
+    if (barFill && bar) {
+      bar.classList.remove('revv-loader-bar--indeterminate');
+      barFill.style.width = percent + '%';
     }
   }
 
@@ -217,12 +239,12 @@ window.REVV = window.REVV || {};
         // onProgress callback
         function (xhr) {
           if (xhr.total === 0) {
-            // No Content-Length header — use indeterminate bar + show MB loaded
+            // No Content-Length header — estimate percentage from known sizes
             if (!indeterminateSet) {
               setIndeterminate(overlay);
               indeterminateSet = true;
             }
-            updateIndeterminateProgress(overlay, xhr.loaded);
+            updateIndeterminateProgress(overlay, xhr.loaded, options.path);
           } else {
             var percent = (xhr.loaded / xhr.total) * 100;
             updateProgress(overlay, percent);
