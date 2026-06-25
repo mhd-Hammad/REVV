@@ -70,13 +70,13 @@ window.REVV = window.REVV || {};
 
   // Known model sizes in bytes (for percentage estimation when Content-Length unavailable)
   var KNOWN_MODEL_SIZES = {
-    'bugatti.glb': 16352620,
-    'ferrari.glb': 19189000,
-    'lamborghini.glb': 20555000,
-    'mclaren_p1.glb': 11952000,
-    'pagani.glb': 3250000,
-    'porsche.glb': 20764000,
-    'rimac.glb': 13738000
+    'bugatti.glb': 5452800,
+    'ferrari.glb': 5767168,
+    'lamborghini.glb': 8283136,
+    'mclaren_p1.glb': 4718592,
+    'pagani.glb': 1468006,
+    'porsche.glb': 9961472,
+    'rimac.glb': 4509696
   };
 
   /**
@@ -222,6 +222,13 @@ window.REVV = window.REVV || {};
       var indeterminateSet = false;
 
       var gltfLoader = new THREE.GLTFLoader();
+
+      // Add Draco decoder for compressed models
+      if (THREE.DRACOLoader) {
+        var dracoLoader = new THREE.DRACOLoader();
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+        gltfLoader.setDRACOLoader(dracoLoader);
+      }
 
       gltfLoader.load(
         options.path,

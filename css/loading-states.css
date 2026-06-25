@@ -256,7 +256,7 @@
   background:
     radial-gradient(ellipse at 50% 30%, rgba(140, 184, 232, 0.08), transparent 50%),
     linear-gradient(180deg, #0a0c10 0%, #0d1018 30%, #080a0e 70%, #050608 100%);
-  z-index: 10;
+  z-index: 4;
   transition: opacity 0.6s ease;
   gap: 28px;
 }
