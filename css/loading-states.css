@@ -253,9 +253,12 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0a0c10 0%, #0d1018 50%, #080a0e 100%);
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(140, 184, 232, 0.08), transparent 50%),
+    linear-gradient(180deg, #0a0c10 0%, #0d1018 30%, #080a0e 70%, #050608 100%);
   z-index: 10;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.6s ease;
+  gap: 28px;
 }
 
 .revv-loader-overlay--hidden {
@@ -263,43 +266,84 @@
   pointer-events: none;
 }
 
-/* ==================== LOADER SKELETON ==================== */
+/* ==================== LOADER — Premium Animated ==================== */
 
-.revv-loader-skeleton {
+.revv-loader-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 24px;
+}
+
+/* Animated car silhouette outline */
+.revv-loader-icon {
+  width: 120px;
+  height: 48px;
+  position: relative;
+}
+
+.revv-loader-icon svg {
   width: 100%;
   height: 100%;
+  stroke: var(--accent, #8cb8e8);
+  stroke-width: 1.5;
+  fill: none;
+  opacity: 0.6;
+  animation: revv-loader-pulse 2s ease-in-out infinite;
 }
 
-.revv-loader-skeleton__car {
-  width: 60%;
-  max-width: 400px;
-  height: 40%;
-  max-height: 200px;
-  background: linear-gradient(135deg, #12141a 0%, #1a1c24 100%);
-  border-radius: 12px;
-  position: relative;
+@keyframes revv-loader-pulse {
+  0%, 100% { opacity: 0.4; filter: drop-shadow(0 0 4px var(--accent, #8cb8e8)); }
+  50% { opacity: 0.9; filter: drop-shadow(0 0 16px var(--accent, #8cb8e8)); }
+}
+
+/* Progress bar */
+.revv-loader-bar {
+  width: 180px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
   overflow: hidden;
+  position: relative;
 }
 
-.revv-loader-skeleton__car::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.03) 20%,
-    rgba(255, 255, 255, 0.06) 50%,
-    rgba(255, 255, 255, 0.03) 80%,
-    transparent 100%
-  );
-  background-size: 200% 100%;
-  animation: revv-shimmer 2s ease-in-out infinite;
+.revv-loader-bar__fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent, #8cb8e8);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 8px var(--accent, #8cb8e8);
+}
+
+/* Indeterminate state — sliding bar */
+.revv-loader-bar--indeterminate .revv-loader-bar__fill {
+  width: 40%;
+  animation: revv-bar-slide 1.4s ease-in-out infinite;
+}
+
+@keyframes revv-bar-slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(450%); }
+}
+
+/* Loading text */
+.revv-loader-text {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(245, 243, 239, 0.5);
+}
+
+.revv-loader-percent {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: rgba(245, 243, 239, 0.7);
+  margin-top: 4px;
 }
 
 /* Loader percent text */

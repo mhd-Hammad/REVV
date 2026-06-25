@@ -10,24 +10,35 @@ window.REVV = window.REVV || {};
   'use strict';
 
   /**
-   * Creates and injects a skeleton loading overlay over the target canvas.
+   * Creates and injects a premium loading overlay over the target canvas.
    * @param {HTMLElement} canvasEl - The canvas element to overlay
-   * @param {string} accentColor - CSS color for shimmer accent
+   * @param {string} accentColor - CSS color for accent
    * @returns {HTMLElement} The overlay element
    */
   function createOverlay(canvasEl, accentColor) {
     var overlay = document.createElement('div');
-    overlay.className = 'revv-loader-overlay is-loading';
+    overlay.className = 'revv-loader-overlay';
     overlay.id = 'revv-loader-overlay';
     overlay.style.setProperty('--accent', accentColor);
 
     overlay.innerHTML =
-      '<div class="revv-loader-skeleton">' +
-        '<div class="revv-loader-skeleton__car"></div>' +
-        '<span class="revv-loader-percent">Loading 3D Model...</span>' +
+      '<div class="revv-loader-content">' +
+        '<div class="revv-loader-icon">' +
+          '<svg viewBox="0 0 120 48" xmlns="http://www.w3.org/2000/svg">' +
+            '<path d="M20 38 C20 38 25 28 40 26 C50 24 55 20 60 18 C65 16 75 14 85 16 C95 18 100 22 105 28 C108 32 108 38 108 38" stroke-linecap="round"/>' +
+            '<circle cx="35" cy="40" r="6"/>' +
+            '<circle cx="90" cy="40" r="6"/>' +
+            '<line x1="20" y1="38" x2="108" y2="38" stroke-opacity="0.3"/>' +
+          '</svg>' +
+        '</div>' +
+        '<div class="revv-loader-bar">' +
+          '<div class="revv-loader-bar__fill"></div>' +
+        '</div>' +
+        '<span class="revv-loader-text">Loading 3D Model</span>' +
+        '<span class="revv-loader-percent">0%</span>' +
       '</div>';
 
-    // Ensure canvas parent has relative positioning for overlay placement
+    // Ensure canvas parent has relative positioning
     var parent = canvasEl.parentNode;
     if (parent) {
       var parentPos = window.getComputedStyle(parent).position;
@@ -41,14 +52,19 @@ window.REVV = window.REVV || {};
   }
 
   /**
-   * Updates the skeleton overlay with the current percentage text.
+   * Updates the loader with the current percentage.
    * @param {HTMLElement} overlay - The overlay element
    * @param {number} percent - Progress percentage (0-100)
    */
   function updateProgress(overlay, percent) {
+    var barFill = overlay.querySelector('.revv-loader-bar__fill');
     var percentText = overlay.querySelector('.revv-loader-percent');
+
+    if (barFill) {
+      barFill.style.width = Math.round(percent) + '%';
+    }
     if (percentText) {
-      percentText.textContent = 'Loading 3D Model... ' + Math.round(percent) + '%';
+      percentText.textContent = Math.round(percent) + '%';
     }
   }
 
@@ -57,9 +73,14 @@ window.REVV = window.REVV || {};
    * @param {HTMLElement} overlay - The overlay element
    */
   function setIndeterminate(overlay) {
+    var bar = overlay.querySelector('.revv-loader-bar');
     var percentText = overlay.querySelector('.revv-loader-percent');
+
+    if (bar) {
+      bar.classList.add('revv-loader-bar--indeterminate');
+    }
     if (percentText) {
-      percentText.textContent = 'Loading 3D Model...';
+      percentText.textContent = '';
     }
   }
 
