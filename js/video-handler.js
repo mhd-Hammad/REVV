@@ -95,6 +95,7 @@ window.REVV = window.REVV || {};
       sourceEl.src = sourceSrc;
     }
     videoEl.preload = 'metadata';
+    videoEl.autoplay = true;
     videoEl.load();
     videoEl.play().catch(function () {});
     handleVideo(videoEl, opts);
