@@ -10,30 +10,22 @@ window.REVV = window.REVV || {};
   'use strict';
 
   /**
-   * Creates and injects the SVG progress ring overlay over the target canvas.
+   * Creates and injects a skeleton loading overlay over the target canvas.
    * @param {HTMLElement} canvasEl - The canvas element to overlay
-   * @param {string} accentColor - CSS color for the progress ring
+   * @param {string} accentColor - CSS color for shimmer accent
    * @returns {HTMLElement} The overlay element
    */
   function createOverlay(canvasEl, accentColor) {
     var overlay = document.createElement('div');
-    overlay.className = 'revv-loader-overlay';
+    overlay.className = 'revv-loader-overlay is-loading';
     overlay.id = 'revv-loader-overlay';
     overlay.style.setProperty('--accent', accentColor);
 
     overlay.innerHTML =
-      '<svg class="revv-loader-ring" viewBox="0 0 100 100">' +
-        '<circle class="revv-loader-ring__track" cx="50" cy="50" r="44" />' +
-        '<circle class="revv-loader-ring__progress" cx="50" cy="50" r="44" ' +
-          'stroke-dasharray="276.46" stroke-dashoffset="276.46" />' +
-      '</svg>' +
-      '<span class="revv-loader-percent">0%</span>';
-
-    // Set accent color on the progress circle via inline style
-    var progressCircle = overlay.querySelector('.revv-loader-ring__progress');
-    if (progressCircle) {
-      progressCircle.style.stroke = accentColor;
-    }
+      '<div class="revv-loader-skeleton">' +
+        '<div class="revv-loader-skeleton__car"></div>' +
+        '<span class="revv-loader-percent">Loading 3D Model...</span>' +
+      '</div>';
 
     // Ensure canvas parent has relative positioning for overlay placement
     var parent = canvasEl.parentNode;
@@ -49,38 +41,25 @@ window.REVV = window.REVV || {};
   }
 
   /**
-   * Updates the progress ring with the current percentage.
+   * Updates the skeleton overlay with the current percentage text.
    * @param {HTMLElement} overlay - The overlay element
    * @param {number} percent - Progress percentage (0-100)
    */
   function updateProgress(overlay, percent) {
-    var progressCircle = overlay.querySelector('.revv-loader-ring__progress');
     var percentText = overlay.querySelector('.revv-loader-percent');
-
-    if (progressCircle) {
-      var offset = 276.46 * (1 - percent / 100);
-      progressCircle.style.strokeDashoffset = offset;
-    }
-
     if (percentText) {
-      percentText.textContent = Math.round(percent) + '%';
+      percentText.textContent = 'Loading 3D Model... ' + Math.round(percent) + '%';
     }
   }
 
   /**
-   * Sets the ring to indeterminate mode (no Content-Length available).
+   * Sets the overlay to indeterminate mode (no Content-Length available).
    * @param {HTMLElement} overlay - The overlay element
    */
   function setIndeterminate(overlay) {
-    var ring = overlay.querySelector('.revv-loader-ring');
     var percentText = overlay.querySelector('.revv-loader-percent');
-
-    if (ring) {
-      ring.classList.add('revv-loader-ring--indeterminate');
-    }
-
     if (percentText) {
-      percentText.style.display = 'none';
+      percentText.textContent = 'Loading 3D Model...';
     }
   }
 
