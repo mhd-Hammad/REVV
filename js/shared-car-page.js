@@ -467,25 +467,41 @@ window.REVV = window.REVV || {};
     });
 
     // Add scene lights for ground illumination
+    // Use bounding box to determine car front/back direction
     if (!scene.userData._driveLights) {
+      var frontZ = 3;
+      var rearZ = -2.5;
+
+      // Detect car facing direction from model bounding box center
+      if (carModel) {
+        var box = new THREE.Box3().setFromObject(carModel);
+        var center = box.getCenter(new THREE.Vector3());
+        // If model center is offset in Z, the longer end is the front
+        if (center.z < -0.3) {
+          // Car faces negative Z
+          frontZ = -3;
+          rearZ = 2.5;
+        }
+      }
+
       var hL = new THREE.SpotLight(0xffffff, 3, 12, Math.PI / 6, 0.5);
-      hL.position.set(-0.8, 0.6, 3);
-      hL.target.position.set(-0.8, 0, 8);
+      hL.position.set(-0.8, 0.6, frontZ);
+      hL.target.position.set(-0.8, 0, frontZ > 0 ? 8 : -8);
       scene.add(hL);
       scene.add(hL.target);
 
       var hR = new THREE.SpotLight(0xffffff, 3, 12, Math.PI / 6, 0.5);
-      hR.position.set(0.8, 0.6, 3);
-      hR.target.position.set(0.8, 0, 8);
+      hR.position.set(0.8, 0.6, frontZ);
+      hR.target.position.set(0.8, 0, frontZ > 0 ? 8 : -8);
       scene.add(hR);
       scene.add(hR.target);
 
       var tL = new THREE.PointLight(0xff1100, 2.5, 5);
-      tL.position.set(-0.7, 0.6, -2.5);
+      tL.position.set(-0.7, 0.6, rearZ);
       scene.add(tL);
 
       var tR = new THREE.PointLight(0xff1100, 2.5, 5);
-      tR.position.set(0.7, 0.6, -2.5);
+      tR.position.set(0.7, 0.6, rearZ);
       scene.add(tR);
 
       var iL = new THREE.PointLight(0xff6633, 0.8, 3);
