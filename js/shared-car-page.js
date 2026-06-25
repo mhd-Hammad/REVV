@@ -252,6 +252,11 @@ window.REVV = window.REVV || {};
 
         scene.add(carModel);
         startAnimation();
+        // Show color controls and explore button now that model is ready
+        var colorCtrl = document.getElementById('color-controls');
+        var heroBottom = document.querySelector('.hero-bottom-controls');
+        if (colorCtrl) colorCtrl.classList.remove('color-controls-hidden');
+        if (heroBottom) heroBottom.style.display = '';
         console.log(config.brand + ' model loaded successfully');
       },
       onError: function (error) {
@@ -336,7 +341,10 @@ window.REVV = window.REVV || {};
         startAnimation();
         show360Btn.classList.add('hero-toggle-hidden');
         if (showVideoBtn) showVideoBtn.classList.remove('hero-toggle-hidden');
-        if (colorControls) colorControls.classList.remove('color-controls-hidden');
+        // Hide bottom controls and color picker during loading
+        if (colorControls) colorControls.classList.add('color-controls-hidden');
+        var heroBottom = document.querySelector('.hero-bottom-controls');
+        if (heroBottom) heroBottom.style.display = 'none';
         if (heroText) {
           heroText.style.opacity = '0';
           heroText.style.pointerEvents = 'none';
