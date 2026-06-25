@@ -163,11 +163,11 @@ function applyHeroCar(car) {
     playNextInRotation();
     carVideoEl.addEventListener('ended', playNextInRotation);
 
-    // Fallback: if video fails or stalls, rotate after 8 seconds
+    // Fallback: if video fails or stalls, rotate after 15 seconds
     let rotationTimer = null;
     function resetRotationTimer() {
         if (rotationTimer) clearTimeout(rotationTimer);
-        rotationTimer = setTimeout(playNextInRotation, 8000);
+        rotationTimer = setTimeout(playNextInRotation, 15000);
     }
     carVideoEl.addEventListener('ended', resetRotationTimer);
     carVideoEl.addEventListener('playing', resetRotationTimer);
