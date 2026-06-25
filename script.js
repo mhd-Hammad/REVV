@@ -163,6 +163,21 @@ function applyHeroCar(car) {
     playNextInRotation();
     carVideoEl.addEventListener('ended', playNextInRotation);
 
+    // Fallback: if video fails or stalls, rotate after 8 seconds
+    let rotationTimer = null;
+    function resetRotationTimer() {
+        if (rotationTimer) clearTimeout(rotationTimer);
+        rotationTimer = setTimeout(playNextInRotation, 8000);
+    }
+    carVideoEl.addEventListener('ended', resetRotationTimer);
+    carVideoEl.addEventListener('playing', resetRotationTimer);
+    carVideoEl.addEventListener('error', function() {
+        // If video fails, skip to next after 2 seconds
+        if (rotationTimer) clearTimeout(rotationTimer);
+        rotationTimer = setTimeout(playNextInRotation, 2000);
+    });
+    resetRotationTimer();
+
     /* ----------------------------------------------------------
        3. LOGO BAR — Infinite Scroll + Click-to-Section
        ---------------------------------------------------------- */
