@@ -100,7 +100,7 @@ npx serve .
 
 <!-- Add your deployment link here -->
 
-🔗 **[View Live Demo](#)** *[](https://revv-hypercars.netlify.app/)*
+🔗 **[View Live Demo](https://revv-hypercar.vercel.app)**
 
 ---
 
