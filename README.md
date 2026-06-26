@@ -108,17 +108,12 @@ npx serve .
 
 ```
 REVV/
-├── index.html           # Splash/intro screen (entry point)
-├── home.html            # Landing page (car collection)
-├── script.js            # Landing page logic
-├── style.css            # Landing page styles
+├── index.html              # Splash/intro screen (entry point)
+├── home.html               # Landing page (car collection)
+├── script.js               # Landing page logic
+├── style.css               # Landing page styles
 │
-├── assets/
-│   ├── videos/          # MP4 video files
-│   ├── images/          # SVG, PNG, JPG, AVIF, WebP
-│   └── models/          # GLB 3D models
-│
-├── pages/               # Individual car detail pages
+├── pages/                  # Individual car detail pages
 │   ├── bugatti-chiron.html
 │   ├── ferrari-sf90.html
 │   ├── lamborghini-revuelto.html
@@ -127,15 +122,32 @@ REVV/
 │   ├── porsche-911.html
 │   └── rimac-nevera.html
 │
-└── css/                 # Car page stylesheets
-    ├── bugatti-chiron.css
-    ├── ferrari-sf90.css
-    ├── lamborghini-revuelto.css
-    ├── mclaren-p1.css
-    ├── pagani-huayra.css
-    ├── porsche-911.css
-    └── rimac-nevera.css
+├── css/                    # Stylesheets
+│   ├── bugatti-chiron.css
+│   ├── ferrari-sf90.css
+│   ├── lamborghini-revuelto.css
+│   ├── mclaren-p1.css
+│   ├── pagani-huayra.css
+│   ├── porsche-911.css
+│   ├── rimac-nevera.css
+│   └── loading-states.css  # Loading overlay styles
+│
+└── js/                     # JavaScript
+    ├── shared-car-page.js  # Shared bootstrap for all car pages (3D, drive mode, colors)
+    ├── loader.js           # 3D model loader with progress overlay
+    ├── toast.js            # Toast notification system
+    ├── video-handler.js    # Video playback utilities
+    └── pages/              # Per-car config scripts
+        ├── bugatti-chiron.js
+        ├── ferrari-sf90.js
+        ├── lamborghini-revuelto.js
+        ├── mclaren-p1.js
+        ├── pagani-huayra.js
+        ├── porsche-911.js
+        └── rimac-nevera.js
 ```
+
+> **Note:** Media assets (images, videos, 3D models) are served via Cloudinary CDN and not included in the repository.
 
 ---
 
