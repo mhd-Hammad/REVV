@@ -4,6 +4,14 @@ node_modules/
 package.json
 package-lock.json
 upload-videos.js
+upload-images.js
+upload-models.js
 replace-video-urls.js
+replace-image-urls.js
 cloudinary-urls.json
-assets/videos/
+cloudinary-image-urls.json
+compress-models.js
+assets/
+OpenMontage/
+.playwright-mcp/
+.env

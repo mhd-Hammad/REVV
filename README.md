@@ -64,10 +64,10 @@ No frameworks. No build tools. No dependencies beyond CDN libraries.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/revv.git
+git clone https://github.com/mhd-Hammad/REVV.git
 
 # Navigate to the project
-cd revv
+cd REVV
 
 # Open in browser
 # Option 1: Open index.html directly (splash screen)
